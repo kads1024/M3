@@ -27,8 +27,11 @@ namespace M3.Core.Domain.Match
                 for (int x = 0; x < board.Width; x++)
                 {
                     var gem = board.GetCell(x, y).Gem;
+                      
                     if (gem == null)
                     {
+                        CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
+                        
                         currentColor = null;
                         positions.Clear();
                         continue;
@@ -45,8 +48,6 @@ namespace M3.Core.Domain.Match
                         currentColor = gem.Color;
                         positions = new List<Position> { new Position(x, y) };
                     }
-                    
-                    
                 }
 
                 CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
@@ -65,9 +66,10 @@ namespace M3.Core.Domain.Match
                 {
                     var gem = board.GetCell(x, y).Gem;
                     
-                    // TODO: Find a better way to handle null. Tests Fail if gem after a matches is null
                     if (gem == null)
                     {
+                        CacheIfMatch(positions, currentColor, MatchDirection.Vertical, results);
+                        
                         currentColor = null;
                         positions.Clear();
                         continue;
@@ -98,8 +100,7 @@ namespace M3.Core.Domain.Match
         {
             if (color.HasValue && positions.Count >= 3)
             {
-                
-                results.Add(new MatchGroup(color.Value, direction, positions));
+                results.Add(new MatchGroup(color.Value, direction, new List<Position>(positions)));
             }
         }
     }

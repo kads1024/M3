@@ -10,12 +10,12 @@ namespace M3.Tests.Core.Domain.Match
         [Test]
         public void Detect_FindsHorizontalMatchOfThree()
         {
-            var board = new BoardState(5, 5);
-            board.SetGem(0, 2, new GemState(GemColor.Blue, GemType.Normal));
-            board.SetGem(1, 2, new GemState(GemColor.Red, GemType.Normal));
-            board.SetGem(2, 2, new GemState(GemColor.Red, GemType.Normal));
-            board.SetGem(3, 2, new GemState(GemColor.Red, GemType.Normal));
-            board.SetGem(4, 2, new GemState(GemColor.Blue, GemType.Normal));
+            var board = new BoardState(10, 10);
+
+            board.SetGem(1, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(2, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(3, 0, new GemState(GemColor.Red, GemType.Normal));
+
             var detector = new LineMatchDetector();
             var matches = detector.Detect(board);
 
@@ -30,12 +30,10 @@ namespace M3.Tests.Core.Domain.Match
         {
             var board = new BoardState(5, 5);
             
-            board.SetGem(2, 0, new GemState(GemColor.Blue, GemType.Normal));
             board.SetGem(2, 1, new GemState(GemColor.Blue, GemType.Normal));
             board.SetGem(2, 2, new GemState(GemColor.Blue, GemType.Normal));
-            board.SetGem(2, 3, new GemState(GemColor.Red, GemType.Normal));
-            board.SetGem(2, 4, new GemState(GemColor.Red, GemType.Normal));
-            
+            board.SetGem(2, 3, new GemState(GemColor.Blue, GemType.Normal));
+   
             var detector = new LineMatchDetector();
             var matches = detector.Detect(board);
 
@@ -86,8 +84,7 @@ namespace M3.Tests.Core.Domain.Match
             board.SetGem(1, 0, new GemState(GemColor.Yellow, GemType.Normal));
             board.SetGem(2, 0, new GemState(GemColor.Yellow, GemType.Normal));
             board.SetGem(3, 0, new GemState(GemColor.Yellow, GemType.Normal));
-            board.SetGem(4, 0, new GemState(GemColor.Yellow, GemType.Normal));
-            board.SetGem(5, 0, new GemState(GemColor.Yellow, GemType.Normal));
+
             
             var detector = new LineMatchDetector();
             var matches = detector.Detect(board);
