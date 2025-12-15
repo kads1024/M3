@@ -15,42 +15,43 @@ namespace M3.Core.Domain.Match
             
             return results;
         }
-
-        // Implementation comes AFTER tests
+        
         private void DetectHorizontal(BoardState board, List<MatchGroup> results)
         {
             for (int y = 0; y < board.Height; y++)
             {
                 GemColor? currentColor = null;
-                var positions = new List<Position>();
+                var runPositions = new List<Position>();
 
                 for (int x = 0; x < board.Width; x++)
                 {
-                    var gem = board.GetCell(x, y).Gem;
-                      
-                    if (gem == null)
+                    var cell = board.GetCell(x, y);
+
+                    if (cell.IsEmpty)
                     {
-                        CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
-                        
+                        FlushRunIfValid(runPositions, currentColor, MatchDirection.Horizontal, results);
                         currentColor = null;
-                        positions.Clear();
+                        runPositions.Clear();
                         continue;
                     }
 
-                    if (gem.Color == currentColor)
+                    var gemColor = cell.Gem.Color;
+
+                    if (currentColor == gemColor)
                     {
-                        positions.Add(new Position(x, y));
+                        runPositions.Add(cell.Position);
                     }
                     else
                     {
-                        CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
-
-                        currentColor = gem.Color;
-                        positions = new List<Position> { new Position(x, y) };
+                        FlushRunIfValid(runPositions, currentColor, MatchDirection.Horizontal, results);
+                        currentColor = gemColor;
+                        runPositions.Clear();
+                        runPositions.Add(cell.Position);
                     }
                 }
 
-                CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
+                // End-of-row flush
+                FlushRunIfValid(runPositions, currentColor, MatchDirection.Horizontal, results);
             }
             
         }
@@ -60,47 +61,56 @@ namespace M3.Core.Domain.Match
             for (int x = 0; x < board.Width; x++)
             {
                 GemColor? currentColor = null;
-                var positions = new List<Position>();
+                var runPositions = new List<Position>();
 
                 for (int y = 0; y < board.Height; y++)
                 {
-                    var gem = board.GetCell(x, y).Gem;
-                    
-                    if (gem == null)
+                    var cell = board.GetCell(x, y);
+
+                    if (cell.IsEmpty)
                     {
-                        CacheIfMatch(positions, currentColor, MatchDirection.Vertical, results);
-                        
+                        FlushRunIfValid(runPositions, currentColor, MatchDirection.Vertical, results);
                         currentColor = null;
-                        positions.Clear();
+                        runPositions.Clear();
                         continue;
                     }
 
-                    if (gem.Color == currentColor)
+                    var gemColor = cell.Gem.Color;
+
+                    if (currentColor == gemColor)
                     {
-                        positions.Add(new Position(x, y));
+                        runPositions.Add(cell.Position);
                     }
                     else
                     {
-                        CacheIfMatch(positions, currentColor, MatchDirection.Vertical, results);
-
-                        currentColor = gem.Color;
-                        positions = new List<Position> { new Position(x, y) };
+                        FlushRunIfValid(runPositions, currentColor, MatchDirection.Vertical, results);
+                        currentColor = gemColor;
+                        runPositions.Clear();
+                        runPositions.Add(cell.Position);
                     }
                 }
 
-                CacheIfMatch(positions, currentColor, MatchDirection.Vertical, results);
+                // End-of-column flush
+                FlushRunIfValid(runPositions, currentColor, MatchDirection.Vertical, results);
             }
         }
         
-        private void CacheIfMatch(
+        private static void FlushRunIfValid(
             List<Position> positions,
             GemColor? color,
             MatchDirection direction,
             List<MatchGroup> results)
         {
-            if (color.HasValue && positions.Count >= 3)
+            if (color == null)
+                return;
+
+            if (positions.Count >= 3)
             {
-                results.Add(new MatchGroup(color.Value, direction, new List<Position>(positions)));
+                results.Add(new MatchGroup(
+                    color.Value,
+                    direction,
+                    new List<Position>(positions)
+                ));
             }
         }
     }
