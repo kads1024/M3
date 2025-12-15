@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using M3.Core.Domain;
 using M3.Core.Domain.Match;
-using UnityEngine;
 
 namespace M3.Tests.Core.Domain.Match
 {
