@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq.Expressions;
+using UnityEngine;
 
 namespace M3.Core.Domain.Match
 {
@@ -10,12 +12,95 @@ namespace M3.Core.Domain.Match
 
             DetectHorizontal(board, results);
             DetectVertical(board, results);
-
+            
             return results;
         }
 
         // Implementation comes AFTER tests
-        private void DetectHorizontal(BoardState board, List<MatchGroup> results) { }
-        private void DetectVertical(BoardState board, List<MatchGroup> results) { }
+        private void DetectHorizontal(BoardState board, List<MatchGroup> results)
+        {
+            for (int y = 0; y < board.Height; y++)
+            {
+                GemColor? currentColor = null;
+                var positions = new List<Position>();
+
+                for (int x = 0; x < board.Width; x++)
+                {
+                    var gem = board.GetCell(x, y).Gem;
+                    if (gem == null)
+                    {
+                        currentColor = null;
+                        positions.Clear();
+                        continue;
+                    }
+
+                    if (gem.Color == currentColor)
+                    {
+                        positions.Add(new Position(x, y));
+                    }
+                    else
+                    {
+                        CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
+
+                        currentColor = gem.Color;
+                        positions = new List<Position> { new Position(x, y) };
+                    }
+                    
+                    
+                }
+
+                CacheIfMatch(positions, currentColor, MatchDirection.Horizontal, results);
+            }
+            
+        }
+
+        private void DetectVertical(BoardState board, List<MatchGroup> results)
+        {
+            for (int x = 0; x < board.Width; x++)
+            {
+                GemColor? currentColor = null;
+                var positions = new List<Position>();
+
+                for (int y = 0; y < board.Height; y++)
+                {
+                    var gem = board.GetCell(x, y).Gem;
+                    
+                    // TODO: Find a better way to handle null. Tests Fail if gem after a matches is null
+                    if (gem == null)
+                    {
+                        currentColor = null;
+                        positions.Clear();
+                        continue;
+                    }
+
+                    if (gem.Color == currentColor)
+                    {
+                        positions.Add(new Position(x, y));
+                    }
+                    else
+                    {
+                        CacheIfMatch(positions, currentColor, MatchDirection.Vertical, results);
+
+                        currentColor = gem.Color;
+                        positions = new List<Position> { new Position(x, y) };
+                    }
+                }
+
+                CacheIfMatch(positions, currentColor, MatchDirection.Vertical, results);
+            }
+        }
+        
+        private void CacheIfMatch(
+            List<Position> positions,
+            GemColor? color,
+            MatchDirection direction,
+            List<MatchGroup> results)
+        {
+            if (color.HasValue && positions.Count >= 3)
+            {
+                
+                results.Add(new MatchGroup(color.Value, direction, positions));
+            }
+        }
     }
 }
