@@ -37,9 +37,9 @@ namespace M3.Tests.Core.Domain.Match
                 MatchDirection.Horizontal,
                 new[]
                 {
-                    new Position(1, 2),
-                    new Position(2, 2),
-                    new Position(3, 2)
+                    new Position(1, 1),
+                    new Position(2, 1),
+                    new Position(3, 1)
                 });
 
             var vertical = new MatchGroup(
