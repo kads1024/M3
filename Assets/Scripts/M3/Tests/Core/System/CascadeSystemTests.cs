@@ -71,7 +71,7 @@ namespace M3.Tests.Core.System
 
             var cascade = CreateCascadeSystem(seed: 10);
 
-            cascade.Resolve(board, new SwapContext());
+            cascade.Resolve(board,SwapContext.Cascade());
 
             // Board must be full
             for (int x = 0; x < board.Width; x++)
@@ -102,7 +102,7 @@ namespace M3.Tests.Core.System
 
             var cascade = CreateCascadeSystem(seed: 20);
 
-            cascade.Resolve(board, new SwapContext());
+            cascade.Resolve(board, SwapContext.Cascade());
 
             // Board must be stable
             AssertNoMatches(board);
@@ -128,7 +128,7 @@ namespace M3.Tests.Core.System
             var snapshot = Snapshot(board);
             var cascade = CreateCascadeSystem(seed: 30);
 
-            cascade.Resolve(board, new SwapContext());
+            cascade.Resolve(board, SwapContext.Cascade());
 
             AssertBoardEquals(snapshot, board);
         }
@@ -146,7 +146,7 @@ namespace M3.Tests.Core.System
             var cascade = CreateCascadeSystem(seed: 999);
 
             // If this hangs, the test runner will fail
-            cascade.Resolve(board, new SwapContext());
+            cascade.Resolve(board,SwapContext.Cascade());
 
             AssertNoMatches(board);
         }  
@@ -166,7 +166,7 @@ namespace M3.Tests.Core.System
 
             cascade.Resolve(
                 board,
-                new SwapContext());
+                SwapContext.Cascade());
 
             AssertNoMatches(board);
         }
@@ -184,7 +184,7 @@ namespace M3.Tests.Core.System
 
             cascade.Resolve(
                 board,
-                new SwapContext());
+                SwapContext.Cascade());
 
             AssertNoMatches(board);
         }
