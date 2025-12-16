@@ -1,4 +1,5 @@
-﻿using M3.Core.Application;
+﻿using System.Collections.Generic;
+using M3.Core.Application;
 using NUnit.Framework;
 using M3.Core.Domain;
 using M3.Core.Domain.Bomb;
@@ -28,6 +29,21 @@ namespace M3.Tests.Core.System
             var matches = detector.Detect(board);
 
             Assert.AreEqual(0, matches.Count, "Board still contains matches.");
+        }
+        
+        private static void AssertNoBombsOfColor(BoardState board, GemColor color)
+        {
+            for (int x = 0; x < board.Width; x++)
+            for (int y = 0; y < board.Height; y++)
+            {
+                var cell = board.GetCell(x, y);
+                if (!cell.IsEmpty &&
+                    cell.Gem.Type == GemType.Bomb &&
+                    cell.Gem.Color == color)
+                {
+                    Assert.Fail($"Found remaining {color} bomb at ({x},{y})");
+                }
+            }
         }
         
         private static GemColor?[,] Snapshot(BoardState board)
@@ -224,6 +240,158 @@ namespace M3.Tests.Core.System
             cascade.Resolve(board, SwapContext.Cascade());
 
             AssertNoMatches(board);
+        }
+
+
+        [Test]
+        public void BombChain_SingleBomb_ExplodesAndClearsArea()
+        {
+            var board = new BoardState(7, 7);
+
+            // Create a simple match that will create a bomb at (3,3)
+            board.SetGem(2, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(3, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(4, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(3, 4, new GemState(GemColor.Red, GemType.Normal));
+
+            var cascade = new CascadeSystem(
+                new LineMatchDetector(),
+                new MatchClassifier(),
+                new GravitySystem(),
+                new GemSpawner(seed: 1),
+                new BombCreationRule(),
+                new BombResolver());
+
+            cascade.Resolve(
+                board,
+                SwapContext.PlayerMove(
+                    new Position(3, 3),
+                    new Position(3, 4)));
+
+            // After full cascade, board must be stable
+            AssertNoMatches(board);
+        }
+        
+        [Test]
+        public void BombChain_BombHitsAnotherBomb_TriggersSecondExplosion()
+        {
+            var board = new BoardState(9, 9);
+
+            // First bomb (will be created by match)
+            board.SetGem(4, 4, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(5, 4, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(6, 4, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(5, 5, new GemState(GemColor.Red, GemType.Normal));
+
+            // Second bomb already on board, positioned to be hit
+            board.SetGem(7, 4, new GemState(GemColor.Red, GemType.Bomb));
+
+            var cascade = new CascadeSystem(
+                new LineMatchDetector(),
+                new MatchClassifier(),
+                new GravitySystem(),
+                new GemSpawner(seed: 2),
+                new BombCreationRule(),
+                new BombResolver());
+
+            cascade.Resolve(
+                board,
+                SwapContext.PlayerMove(
+                    new Position(5, 4),
+                    new Position(5, 5)));
+
+            AssertNoMatches(board);
+        }
+
+        [Test]
+        public void BombChain_MultipleBombs_TerminatesCorrectly()
+        {
+            var board = new BoardState(9, 9);
+
+            // Create a dense bomb cluster
+            board.SetGem(4, 4, new GemState(GemColor.Red, GemType.Bomb));
+            board.SetGem(6, 4, new GemState(GemColor.Red, GemType.Bomb));
+            board.SetGem(5, 6, new GemState(GemColor.Red, GemType.Bomb));
+
+            // Triggering match
+            board.SetGem(4, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(5, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(6, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(5, 4, new GemState(GemColor.Red, GemType.Normal));
+
+            var cascade = new CascadeSystem(
+                new LineMatchDetector(),
+                new MatchClassifier(),
+                new GravitySystem(),
+                new GemSpawner(seed: 4),
+                new BombCreationRule(),
+                new BombResolver());
+
+            cascade.Resolve(
+                board,
+                SwapContext.PlayerMove(
+                    new Position(5, 3),
+                    new Position(5, 4)));
+
+            AssertNoMatches(board);
+        }
+
+        private sealed class DummyBombResolver : IBombResolver
+        {
+            private readonly IBombResolver _inner;
+
+            public int ExplosionCount { get; private set; }
+
+            public DummyBombResolver(IBombResolver inner)
+            {
+                _inner = inner;
+            }
+
+            public IReadOnlyCollection<Position> Resolve(
+                BoardState board,
+                Position bombPosition)
+            {
+                ExplosionCount++;
+                return _inner.Resolve(board, bombPosition);
+            }
+        }
+
+        [Test]
+        public void BombChain_ExplosionCount_IsCorrect_WhenTriggeredByExistingBomb()
+        {
+            var board = new BoardState(11, 11);
+
+            // Existing bomb that WILL explode
+            board.SetGem(5, 5, new GemState(GemColor.Red, GemType.Bomb));
+
+            // Two other bombs in blast range
+            board.SetGem(7, 5, new GemState(GemColor.Blue, GemType.Bomb));
+            board.SetGem(5, 7, new GemState(GemColor.Green, GemType.Bomb));
+
+            // Trigger match that clears the red bomb
+            board.SetGem(4, 5, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(6, 5, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(5, 4, new GemState(GemColor.Red, GemType.Normal));
+
+            var realResolver = new BombResolver();
+            var spyResolver = new DummyBombResolver(realResolver);
+
+            var cascade = new CascadeSystem(
+                new LineMatchDetector(),
+                new MatchClassifier(),
+                new GravitySystem(),
+                new GemSpawner(seed: 42),
+                new BombCreationRule(),
+                spyResolver);
+
+            cascade.Resolve(
+                board,
+                SwapContext.PlayerMove(
+                    new Position(5, 4),
+                    new Position(5, 5)));
+
+            // Red bomb + 2 chained bombs
+            Assert.AreEqual(3, spyResolver.ExplosionCount);
         }
 
 

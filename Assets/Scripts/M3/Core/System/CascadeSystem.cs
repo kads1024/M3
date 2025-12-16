@@ -127,6 +127,7 @@ namespace M3.Core.System
                     }
                 }
 
+
                 // 4. Remove gems (except bomb replacement)
                 foreach (var pos in toRemove)
                 {
