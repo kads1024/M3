@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using M3.Core.Domain.Bomb;
 using M3.Core.Domain;
-using M3.Core.System;
 
 
-namespace M3.Tests.Core.System
+namespace M3.Tests.Core.Domain.Bomb
 {
     public class BombResolverTests
     {
@@ -100,7 +100,5 @@ namespace M3.Tests.Core.System
                 result.Contains(pos),
                 "Bomb center position was not included.");
         }
-
-
     }
 }

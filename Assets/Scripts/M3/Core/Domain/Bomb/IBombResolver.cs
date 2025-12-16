@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using M3.Core.Domain;
 
-namespace M3.Core.System
+namespace M3.Core.Domain.Bomb
 {
     public interface IBombResolver
     {
