@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using M3.Core.Domain;
 using M3.Core.Domain.Match;
-using M3.Core.Domain.Swap;
 using M3.Core.System;
 
 
@@ -150,6 +149,6 @@ namespace M3.Tests.Core.System
             cascade.Resolve(board);
 
             AssertNoMatches(board);
-        }
+        }   
     }
 }
