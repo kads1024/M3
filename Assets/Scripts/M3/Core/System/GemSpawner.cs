@@ -115,6 +115,7 @@ namespace M3.Core.System
             return false;
         }
         
+        // TODO: Move to a shared helper class?
         private static bool HasColor(BoardState board, int x, int y, GemColor color)
         {
             var cell = board.GetCell(x, y);
