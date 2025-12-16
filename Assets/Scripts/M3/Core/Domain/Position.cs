@@ -1,3 +1,5 @@
+using System;
+
 namespace M3.Core.Domain
 {
     public readonly struct Position
@@ -10,5 +12,9 @@ namespace M3.Core.Domain
             X = x;
             Y = y;
         }
+        public override bool Equals(object obj) =>
+            obj is Position p && p.X == X && p.Y == Y;
+
+        public override int GetHashCode() => HashCode.Combine(X, Y);
     }
 }
