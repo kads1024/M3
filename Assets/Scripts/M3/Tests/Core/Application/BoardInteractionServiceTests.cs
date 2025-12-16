@@ -82,7 +82,80 @@ namespace M3.Tests.Core.Application
 
             // Board should be stable after cascade
             AssertNoMatches(board);
-        }   
+        }  
+        
+        // TEST FOR WHEN CASCADE IS TRIGGERED BEHIND THE SCENES 
+        private sealed class DummyCascadeSystem : ICascadeSystem
+        {
+            public int ResolveCallCount { get; private set; }
+
+            public void Resolve(BoardState board)
+            {
+                ResolveCallCount++;
+            }
+        }
+        // CASCADE SYSTEM ONLY CALLS ONCE FOR VALID SWAP
+        [Test]
+        public void TrySwap_ValidSwap_TriggersCascadeOnce()
+        {
+            var board = new BoardState(3, 2);
+
+            // Before swap:
+            // R R G
+            // G G R
+            //
+            // Swap (2,0) <-> (2,1) creates vertical R R R
+
+            board.SetGem(0, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(1, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(2, 0, new GemState(GemColor.Green, GemType.Normal));
+
+            board.SetGem(0, 1, new GemState(GemColor.Green, GemType.Normal));
+            board.SetGem(1, 1, new GemState(GemColor.Green, GemType.Normal));
+            board.SetGem(2, 1, new GemState(GemColor.Red, GemType.Normal));
+
+            var swapRule = new AdjacentSwapRule(new LineMatchDetector());
+            var dummyCascadeSystem = new DummyCascadeSystem();
+
+            var service = new BoardInteractionService(
+                swapRule,
+                dummyCascadeSystem);
+
+            var result = service.TrySwap(
+                board,
+                new Position(2, 0),
+                new Position(2, 1));
+
+            Assert.AreEqual(SwapResult.Accepted, result);
+            Assert.AreEqual(1, dummyCascadeSystem.ResolveCallCount);
+        }
+
+
+        // CASCADE SYSTEM NEVER CALLED FOR VALID SWAP
+        [Test]
+        public void TrySwap_InvalidSwap_DoesNotTriggerCascade()
+        {
+            var board = new BoardState(2, 1);
+
+            board.SetGem(0, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(1, 0, new GemState(GemColor.Blue, GemType.Normal));
+
+            var swapRule = new AdjacentSwapRule(new LineMatchDetector());
+            var dummyCascadeSystem = new DummyCascadeSystem();
+
+            var service = new BoardInteractionService(
+                swapRule,
+                dummyCascadeSystem);
+
+            var result = service.TrySwap(
+                board,
+                new Position(0, 0),
+                new Position(1, 0));
+
+            Assert.AreEqual(SwapResult.Rejected, result);
+            Assert.AreEqual(0, dummyCascadeSystem.ResolveCallCount);
+        }
+
     }
     
     
