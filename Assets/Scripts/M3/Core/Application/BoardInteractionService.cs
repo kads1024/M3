@@ -17,20 +17,16 @@ namespace M3.Core.Application
             _cascadeSystem = cascadeSystem;
         }
 
-        public SwapResult TrySwap(
-            BoardState board,
-            Position a,
-            Position b)
+        public SwapResult TrySwap(BoardState board, Position a, Position b)
         {
-            // 1. Validate swap
             if (!_swapRule.IsSwapValid(board, a, b))
                 return SwapResult.Rejected;
 
-            // 2. Apply swap to the REAL board
             board.Swap(a, b);
 
-            // 3. Resolve cascades (SYSTEM LOGIC)
-            _cascadeSystem.Resolve(board, isPlayerMove: true, a, b);
+            _cascadeSystem.Resolve(
+                board,
+                SwapContext.PlayerMove(a, b));
 
             return SwapResult.Accepted;
         }

@@ -94,20 +94,12 @@ namespace M3.Tests.Core.Application
         private sealed class DummyCascadeSystem : ICascadeSystem
         {
             public int ResolveCallCount { get; private set; }
-            public bool LastIsPlayerMove { get; private set; }
-            public Position? LastSwapA { get; private set; }
-            public Position? LastSwapB { get; private set; }
+            public SwapContext? LastContext { get; private set; }
 
-            public void Resolve(
-                BoardState board,
-                bool isPlayerMove,
-                Position swapA,
-                Position swapB)
+            public void Resolve(BoardState board, SwapContext context)
             {
                 ResolveCallCount++;
-                LastIsPlayerMove = isPlayerMove;
-                LastSwapA = swapA;
-                LastSwapB = swapB;
+                LastContext = context;
             }
         }
         
@@ -158,11 +150,11 @@ namespace M3.Tests.Core.Application
             board.SetGem(1, 0, new GemState(GemColor.Blue, GemType.Normal));
 
             var swapRule = new AdjacentSwapRule(new LineMatchDetector());
-            var spyCascade = new DummyCascadeSystem();
+            var dummyCascadeSystem = new DummyCascadeSystem();
 
             var service = new BoardInteractionService(
                 swapRule,
-                spyCascade);
+                dummyCascadeSystem);
 
             var result = service.TrySwap(
                 board,
@@ -170,27 +162,24 @@ namespace M3.Tests.Core.Application
                 new Position(1, 0));
 
             Assert.AreEqual(SwapResult.Rejected, result);
-            Assert.AreEqual(0, spyCascade.ResolveCallCount);
+            Assert.AreEqual(0, dummyCascadeSystem.ResolveCallCount);
         }
 
         
         [Test]
-        public void TrySwap_ValidSwap_TriggersCascade_WithCorrectContext()
+        public void TrySwap_ValidSwap_PassesPlayerMoveContext()
         {
             var board = new BoardState(3, 2);
 
             board.SetGem(0, 0, new GemState(GemColor.Red, GemType.Normal));
             board.SetGem(1, 0, new GemState(GemColor.Red, GemType.Normal));
             board.SetGem(2, 0, new GemState(GemColor.Green, GemType.Normal));
-
             board.SetGem(2, 1, new GemState(GemColor.Red, GemType.Normal));
 
-            var swapRule = new AdjacentSwapRule(new LineMatchDetector());
-            var spyCascade = new DummyCascadeSystem();
-
+            var dummyCascadeSystem = new DummyCascadeSystem();
             var service = new BoardInteractionService(
-                swapRule,
-                spyCascade);
+                new AdjacentSwapRule(new LineMatchDetector()),
+                dummyCascadeSystem);
 
             var a = new Position(2, 0);
             var b = new Position(2, 1);
@@ -198,13 +187,11 @@ namespace M3.Tests.Core.Application
             var result = service.TrySwap(board, a, b);
 
             Assert.AreEqual(SwapResult.Accepted, result);
-            Assert.AreEqual(1, spyCascade.ResolveCallCount);
-            Assert.AreEqual(true, spyCascade.LastIsPlayerMove);
-            Assert.AreEqual(a, spyCascade.LastSwapA);
-            Assert.AreEqual(b, spyCascade.LastSwapB);
+            Assert.AreEqual(1, dummyCascadeSystem.ResolveCallCount);
+            Assert.IsTrue(dummyCascadeSystem.LastContext!.Value.IsPlayerMove);
+            Assert.AreEqual(a, dummyCascadeSystem.LastContext!.Value.SwapA);
+            Assert.AreEqual(b, dummyCascadeSystem.LastContext!.Value.SwapB);
         }
-
-
     }
     
     

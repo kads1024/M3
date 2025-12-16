@@ -1,7 +1,9 @@
-﻿using NUnit.Framework;
+﻿using M3.Core.Application;
+using NUnit.Framework;
 using M3.Core.Domain;
 using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
+using M3.Core.Domain.Swap;
 using M3.Core.System;
 
 
@@ -69,7 +71,7 @@ namespace M3.Tests.Core.System
 
             var cascade = CreateCascadeSystem(seed: 10);
 
-            cascade.Resolve(board, isPlayerMove: false, new Position(), new Position());
+            cascade.Resolve(board, new SwapContext());
 
             // Board must be full
             for (int x = 0; x < board.Width; x++)
@@ -100,7 +102,7 @@ namespace M3.Tests.Core.System
 
             var cascade = CreateCascadeSystem(seed: 20);
 
-            cascade.Resolve(board, isPlayerMove: false, new Position(), new Position());
+            cascade.Resolve(board, new SwapContext());
 
             // Board must be stable
             AssertNoMatches(board);
@@ -126,7 +128,7 @@ namespace M3.Tests.Core.System
             var snapshot = Snapshot(board);
             var cascade = CreateCascadeSystem(seed: 30);
 
-            cascade.Resolve(board, isPlayerMove: false, new Position(), new Position());
+            cascade.Resolve(board, new SwapContext());
 
             AssertBoardEquals(snapshot, board);
         }
@@ -144,7 +146,7 @@ namespace M3.Tests.Core.System
             var cascade = CreateCascadeSystem(seed: 999);
 
             // If this hangs, the test runner will fail
-            cascade.Resolve(board, isPlayerMove: false, new Position(), new Position());
+            cascade.Resolve(board, new SwapContext());
 
             AssertNoMatches(board);
         }  
@@ -164,9 +166,7 @@ namespace M3.Tests.Core.System
 
             cascade.Resolve(
                 board,
-                isPlayerMove: true,
-                swapA: new Position(2, 0),
-                swapB: new Position(2, 1));
+                new SwapContext());
 
             AssertNoMatches(board);
         }
@@ -184,12 +184,49 @@ namespace M3.Tests.Core.System
 
             cascade.Resolve(
                 board,
-                isPlayerMove: false,
-                swapA: default,
-                swapB: default);
+                new SwapContext());
 
             AssertNoMatches(board);
         }
 
+        [Test]
+        public void Cascade_PlayerMove_ResolvesCorrectly()
+        {
+            var board = new BoardState(3, 3);
+
+            board.SetGem(0, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(1, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(2, 0, new GemState(GemColor.Green, GemType.Normal));
+            board.SetGem(2, 1, new GemState(GemColor.Red, GemType.Normal));
+
+            var cascade = CreateCascadeSystem(seed: 1);
+
+            cascade.Resolve(
+                board,
+                SwapContext.PlayerMove(
+                    new Position(2, 0),
+                    new Position(2, 1)));
+
+            AssertNoMatches(board);
+        }
+        
+        [Test]
+        public void Cascade_NonPlayerMove_DoesNotCreateBomb()
+        {
+            var board = new BoardState(3, 3);
+
+            board.SetGem(0, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(1, 0, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(2, 0, new GemState(GemColor.Red, GemType.Normal));
+
+            var cascade = CreateCascadeSystem(seed: 2);
+
+            cascade.Resolve(board, SwapContext.Cascade());
+
+            AssertNoMatches(board);
+        }
+
+
+        
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using M3.Core.Domain;
 using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
+using M3.Core.Domain.Swap;
 
 namespace M3.Core.System
 {
@@ -33,47 +34,40 @@ namespace M3.Core.System
 
         private static Position? FindActualSwapOrigin(
             IReadOnlyList<ClassifiedMatch> matches,
-            Position a,
-            Position b)
+            SwapContext context)
         {
+            if (!context.IsPlayerMove)
+                return null;
+
             foreach (var match in matches)
             {
-                if (match.Positions.Contains(a))
-                    return a;
+                if (match.Positions.Contains(context.SwapA))
+                    return context.SwapA;
 
-                if (match.Positions.Contains(b))
-                    return b;
+                if (match.Positions.Contains(context.SwapB))
+                    return context.SwapB;
             }
 
             return null;
         }
 
-        public void Resolve(
-            BoardState board,
-            bool isPlayerMove,
-            Position swapA,
-            Position swapB)
+
+        public void Resolve(BoardState board, SwapContext context)
         {
+            bool isPlayerMove = context.IsPlayerMove;
+
             while (true)
             {
                 var rawMatches = _matchDetector.Detect(board);
                 if (rawMatches.Count == 0)
                     break;
 
+                // 1. Classify Matches
                 var classifiedMatches = _matchClassifier.Classify(rawMatches);
 
-                // 0. determine actual swap origin
-                Position? actualSwapOrigin = null;
+                Position? actualSwapOrigin =
+                    FindActualSwapOrigin(classifiedMatches, context);
 
-                if (isPlayerMove)
-                {
-                    actualSwapOrigin = FindActualSwapOrigin(
-                        classifiedMatches,
-                        swapA,
-                        swapB);
-                }
-
-                // 1. Bomb creation (unchanged rule, better input)
                 BombCreationResult? bombToCreate = null;
 
                 if (actualSwapOrigin.HasValue)
@@ -86,7 +80,7 @@ namespace M3.Core.System
                             isPlayerMove);
 
                         if (bombToCreate != null)
-                            break; // one bomb per move
+                            break;
                     }
                 }
 
