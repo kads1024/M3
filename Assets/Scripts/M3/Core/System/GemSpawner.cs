@@ -29,8 +29,8 @@ namespace M3.Core.System
 
         private void SpawnColumn(BoardState board, int x)
         {
-            // From top to bottom
-            for (int y = board.Height - 1; y >= 0; y--)
+            // From bottom to top
+            for (int y = 0; y < board.Height; y++)
             {
                 var cell = board.GetCell(x, y);
                 if (!cell.IsEmpty)
