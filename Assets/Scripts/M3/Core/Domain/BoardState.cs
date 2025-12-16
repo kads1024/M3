@@ -39,7 +39,25 @@ namespace M3.Core.Domain
             return x >= 0 && x < Width &&
                    y >= 0 && y < Height;
         }
+        
+        public void Swap(Position a, Position b)
+        {
+            if (!IsInside(a.X, a.Y) || !IsInside(b.X, b.Y))
+                throw new ArgumentOutOfRangeException();
 
+            var cellA = _cells[a.X, a.Y];
+            var cellB = _cells[b.X, b.Y];
+
+            var gemA = cellA.Gem;
+            var gemB = cellB.Gem;
+
+            if (gemA == null && gemB == null)
+                return;
+
+            cellA.SetGem(gemB);
+            cellB.SetGem(gemA);
+        }
+        
         public void SetGem(int x, int y, GemState gem)
         {
             GetCell(x, y).SetGem(gem);

@@ -15,6 +15,8 @@ namespace M3.Tests.Core.Domain.Match
                 new Position(2, 2),
                 new Position(3, 2)
             };
+            
+            
 
             var match = new MatchGroup(
                 GemColor.Red,
