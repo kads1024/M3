@@ -1,18 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using M3.Core.Domain;
 
-public class IGravitySystem : MonoBehaviour
+namespace M3.Core.System
 {
-    // Start is called before the first frame update
-    void Start()
+    public interface IGravitySystem
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Apply(BoardState board);
     }
 }

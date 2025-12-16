@@ -1,18 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using M3.Core.Domain;
 
-public class ICascadeSystem : MonoBehaviour
+namespace M3.Core.System
 {
-    // Start is called before the first frame update
-    void Start()
+    public interface ICascadeSystem
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Resolve(BoardState board);
     }
 }
