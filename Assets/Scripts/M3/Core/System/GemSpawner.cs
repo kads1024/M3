@@ -45,42 +45,12 @@ namespace M3.Core.System
         {
             var candidates = new List<GemColor>(_availableColors);
 
-            // Prevent vertical match
-            if (y >= 2)
+            foreach (var color in _availableColors)
             {
-                var below1 = board.GetCell(x, y - 1);
-                var below2 = board.GetCell(x, y - 2);
-
-                if (!below1.IsEmpty && !below2.IsEmpty &&
-                    below1.Gem.Color == below2.Gem.Color)
+                if (WouldCreateHorizontalMatch(board, x, y, color) ||
+                    WouldCreateVerticalMatch(board, x, y, color))
                 {
-                    candidates.Remove(below1.Gem.Color);
-                }
-            }
-
-            // Prevent horizontal match (left)
-            if (x >= 2)
-            {
-                var left1 = board.GetCell(x - 1, y);
-                var left2 = board.GetCell(x - 2, y);
-
-                if (!left1.IsEmpty && !left2.IsEmpty &&
-                    left1.Gem.Color == left2.Gem.Color)
-                {
-                    candidates.Remove(left1.Gem.Color);
-                }
-            }
-
-            // Prevent horizontal match (right)
-            if (x + 2 < board.Width)
-            {
-                var right1 = board.GetCell(x + 1, y);
-                var right2 = board.GetCell(x + 2, y);
-
-                if (!right1.IsEmpty && !right2.IsEmpty &&
-                    right1.Gem.Color == right2.Gem.Color)
-                {
-                    candidates.Remove(right1.Gem.Color);
+                    candidates.Remove(color);
                 }
             }
 
@@ -90,5 +60,66 @@ namespace M3.Core.System
 
             return candidates[_random.Next(candidates.Count)];
         }
+        
+        private static bool WouldCreateHorizontalMatch(
+            BoardState board, int x, int y, GemColor color)
+        {
+            // C C X
+            if (x >= 2 &&
+                HasColor(board, x - 1, y, color) &&
+                HasColor(board, x - 2, y, color))
+                return true;
+
+            // C X C
+            if (x >= 1 && x + 1 < board.Width &&
+                HasColor(board, x - 1, y, color) &&
+                HasColor(board, x + 1, y, color))
+                return true;
+
+            // X C C
+            if (x + 2 < board.Width &&
+                HasColor(board, x + 1, y, color) &&
+                HasColor(board, x + 2, y, color))
+                return true;
+
+            return false;
+        }
+
+        private static bool WouldCreateVerticalMatch(
+            BoardState board, int x, int y, GemColor color)
+        {
+            // C
+            // C
+            // X
+            if (y >= 2 &&
+                HasColor(board, x, y - 1, color) &&
+                HasColor(board, x, y - 2, color))
+                return true;
+
+            // C
+            // X
+            // C
+            if (y >= 1 && y + 1 < board.Height &&
+                HasColor(board, x, y - 1, color) &&
+                HasColor(board, x, y + 1, color))
+                return true;
+
+            // X
+            // C
+            // C
+            if (y + 2 < board.Height &&
+                HasColor(board, x, y + 1, color) &&
+                HasColor(board, x, y + 2, color))
+                return true;
+
+            return false;
+        }
+        
+        private static bool HasColor(BoardState board, int x, int y, GemColor color)
+        {
+            var cell = board.GetCell(x, y);
+            return !cell.IsEmpty && cell.Gem.Color == color;
+        }
+
     }
 }

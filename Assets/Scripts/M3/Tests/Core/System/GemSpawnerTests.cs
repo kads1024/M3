@@ -63,14 +63,14 @@ namespace M3.Tests.Core.System
             var board = new BoardState(3, 1);
 
             board.SetGem(0, 0, new GemState(GemColor.Blue, GemType.Normal));
-            board.SetGem(1, 0, new GemState(GemColor.Blue, GemType.Normal));
+            board.SetGem(2, 0, new GemState(GemColor.Blue, GemType.Normal));
 
-            IGemSpawner spawner = new GemSpawner(seed: 99);
+            IGemSpawner spawner = new GemSpawner(seed: 1);
             spawner.Spawn(board);
 
             Assert.AreNotEqual(
                 GemColor.Blue,
-                board.GetCell(2, 0).Gem.Color);
+                board.GetCell(1, 0).Gem.Color);
         }
 
         [Test]
