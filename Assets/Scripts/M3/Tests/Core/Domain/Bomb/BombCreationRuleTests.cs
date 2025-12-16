@@ -75,6 +75,86 @@ namespace M3.Tests.Core.Domain.Bomb
             Assert.AreEqual(GemColor.Yellow, result!.Color);
         }
 
+        
+        [Test]
+        public void TryCreate_PlayerMatch_LShape_CreatesBomb()
+        {
+            var rule = new BombCreationRule();
+
+            var positions = new[]
+            {
+                new Position(1, 0),
+                new Position(1, 1),
+                new Position(1, 2),
+                new Position(2, 2)
+            };
+
+            var match = new ClassifiedMatch(
+                GemColor.Red,
+                MatchPattern.LShape,
+                positions);
+
+            var swapOrigin = new Position(1, 1);
+
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(swapOrigin, result!.Position);
+            Assert.AreEqual(GemColor.Red, result.Color);
+        }
+        
+        [Test]
+        public void TryCreate_PlayerMatch_TShape_CreatesBomb()
+        {
+            var rule = new BombCreationRule();
+
+            var positions = new[]
+            {
+                new Position(0, 1),
+                new Position(1, 1),
+                new Position(2, 1),
+                new Position(1, 0),
+                new Position(1, 2)
+            };
+
+            var match = new ClassifiedMatch(
+                GemColor.Blue,
+                MatchPattern.TShape,
+                positions);
+
+            var swapOrigin = new Position(1, 1);
+
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(swapOrigin, result!.Position);
+            Assert.AreEqual(GemColor.Blue, result.Color);
+        }
+
+        [Test]
+        public void TryCreate_CascadeMatch_LOrTShape_DoesNotCreateBomb()
+        {
+            var rule = new BombCreationRule();
+
+            var positions = new[]
+            {
+                new Position(1, 0),
+                new Position(1, 1),
+                new Position(1, 2),
+                new Position(2, 2)
+            };
+
+            var match = new ClassifiedMatch(
+                GemColor.Green,
+                MatchPattern.LShape,
+                positions);
+
+            var swapOrigin = new Position(1, 1);
+
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: false);
+
+            Assert.IsNull(result);
+        }
 
     }
 }
