@@ -11,7 +11,7 @@ namespace M3.Tests.Core.System
         public void Spawner_EmptyBoard_NoImmediateMatches()
         {
             var board = new BoardState(5, 5);
-            IGemSpawner spawner = new SafeGemSpawner(seed: 123);
+            IGemSpawner spawner = new GemSpawner(seed: 123);
 
             spawner.Spawn(board);
 
@@ -48,7 +48,7 @@ namespace M3.Tests.Core.System
             board.SetGem(0, 0, new GemState(GemColor.Red, GemType.Normal));
             board.SetGem(0, 1, new GemState(GemColor.Red, GemType.Normal));
 
-            IGemSpawner spawner = new SafeGemSpawner(seed: 42);
+            IGemSpawner spawner = new GemSpawner(seed: 42);
             spawner.Spawn(board);
 
             // The gem at y=2 must NOT be Red (would create vertical match)
@@ -65,7 +65,7 @@ namespace M3.Tests.Core.System
             board.SetGem(0, 0, new GemState(GemColor.Blue, GemType.Normal));
             board.SetGem(1, 0, new GemState(GemColor.Blue, GemType.Normal));
 
-            IGemSpawner spawner = new SafeGemSpawner(seed: 99);
+            IGemSpawner spawner = new GemSpawner(seed: 99);
             spawner.Spawn(board);
 
             Assert.AreNotEqual(
@@ -80,7 +80,7 @@ namespace M3.Tests.Core.System
 
             board.SetGem(0, 0, new GemState(GemColor.Green, GemType.Normal));
 
-            IGemSpawner spawner = new SafeGemSpawner(seed: 7);
+            IGemSpawner spawner = new GemSpawner(seed: 7);
             spawner.Spawn(board);
 
             Assert.AreEqual(
@@ -94,8 +94,8 @@ namespace M3.Tests.Core.System
             var boardA = new BoardState(3, 3);
             var boardB = new BoardState(3, 3);
 
-            IGemSpawner spawnerA = new SafeGemSpawner(seed: 1234);
-            IGemSpawner spawnerB = new SafeGemSpawner(seed: 1234);
+            IGemSpawner spawnerA = new GemSpawner(seed: 1234);
+            IGemSpawner spawnerB = new GemSpawner(seed: 1234);
 
             spawnerA.Spawn(boardA);
             spawnerB.Spawn(boardB);
