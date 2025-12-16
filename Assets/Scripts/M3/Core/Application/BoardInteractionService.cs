@@ -30,7 +30,7 @@ namespace M3.Core.Application
             board.Swap(a, b);
 
             // 3. Resolve cascades (SYSTEM LOGIC)
-            _cascadeSystem.Resolve(board);
+            _cascadeSystem.Resolve(board, isPlayerMove: true, a, b);
 
             return SwapResult.Accepted;
         }
