@@ -5,6 +5,7 @@ using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
 using M3.Core.Domain.Swap;
 using M3.Core.System;
+using UnityEngine;
 
 
 namespace M3.Tests.Core.Application
@@ -192,7 +193,119 @@ namespace M3.Tests.Core.Application
             Assert.AreEqual(a, dummyCascadeSystem.LastContext!.Value.SwapA);
             Assert.AreEqual(b, dummyCascadeSystem.LastContext!.Value.SwapB);
         }
-    }
+        
+        
+         [Test]
+         public void Bomb_IsPlacedBeforeGravity_AndFallsLikeNormalGem()
+         {
+             var board = new BoardState(5, 6);
+
+             /*
+                 Board (Y up):
+
+                 y=5 | . . . . .
+                 y=4 | . . . . .
+                 y=3 | . . R . .
+                 y=2 | R R . R .
+                 y=1 | . . . . .
+                 y=0 | . . . . .
+                       0 1 2 3 4
+             */
+
+             // Create a size-4 match that produces a bomb
+             board.SetGem(0, 2, new GemState(GemColor.Red, GemType.Normal));
+             board.SetGem(1, 2, new GemState(GemColor.Red, GemType.Normal));
+             board.SetGem(2, 3, new GemState(GemColor.Red, GemType.Normal));
+             board.SetGem(3, 2, new GemState(GemColor.Red, GemType.Normal));
+
+             var service = CreateService(seed: 2);
+
+             var result = service.TrySwap(
+                 board,
+                 new Position(2, 3),
+                 new Position(2, 2));
+
+             // Find the bomb
+             Position? bombPos = null;
+
+             for (int x = 0; x < board.Width; x++)
+             for (int y = 0; y < board.Height; y++)
+             {
+                 var cell = board.GetCell(x, y);
+                 if (!cell.IsEmpty &&
+                     cell.Gem.Type == GemType.Bomb)
+                 {
+                     bombPos = new Position(x, y);
+                     Debug.Log($"BOMB IS FOUND AT {x} and {y}");
+                     break;
+                 }
+             }
+
+             Assert.IsTrue(bombPos.HasValue, "Bomb did not survive the cascade.");
+
+             // Bomb must be lower than its creation Y (2)
+             Assert.Less(
+                 bombPos.Value.Y,
+                 2,
+                 "Bomb did not fall via gravity.");
+         }
+
+        private sealed class DummyGravitySystem : IGravitySystem
+        {
+            public int BombsProcessed { get; private set; }
     
+            public void Apply(BoardState board)
+            {
+                for (int x = 0; x < board.Width; x++)
+                for (int y = 0; y < board.Height; y++)
+                {
+                    var cell = board.GetCell(x, y);
+                    if (!cell.IsEmpty && cell.Gem.Type == GemType.Bomb)
+                    {
+                        BombsProcessed++;
+                    }
+                }
+    
+                // No gravity logic here — delegate to real one
+                new GravitySystem().Apply(board);
+            }
+        }
+    
+        [Test]
+        public void Swap_CreatesBomb_BombIsProcessedByGravity()
+        {
+            var board = new BoardState(5, 6);
+
+            board.SetGem(1, 2, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(2, 2, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(4, 2, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(3, 3, new GemState(GemColor.Red, GemType.Normal));
+            board.SetGem(3, 2, new GemState(GemColor.Blue, GemType.Normal));
+
+            var spyGravity = new DummyGravitySystem();
+
+            var cascade = new CascadeSystem(
+                new LineMatchDetector(),
+                new MatchClassifier(),
+                spyGravity,
+                new GemSpawner(seed: 99),
+                new BombCreationRule(),
+                new BombResolver());
+
+            var interaction = new BoardInteractionService(
+                new AdjacentSwapRule(new LineMatchDetector()),
+                cascade);
+
+            interaction.TrySwap(
+                board,
+                new Position(3, 2),
+                new Position(3, 3));
+
+            Assert.Greater(spyGravity.BombsProcessed, 0);
+        }
+
+    }
+   
+
     
 }

@@ -133,7 +133,8 @@ namespace M3.Core.System
                 {
                     board.ClearGem(pos.X, pos.Y);
                 }
-
+                
+                
                 // 5. Place bomb if created
                 if (bombToCreate != null)
                 {
