@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using M3.Core.Domain;
+using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
+using M3.Core.Domain.Swap;
 
 namespace M3.Core.System
 {
@@ -10,52 +13,143 @@ namespace M3.Core.System
         private readonly MatchClassifier _matchClassifier;
         private readonly IGravitySystem _gravitySystem;
         private readonly IGemSpawner _gemSpawner;
+        private readonly IBombCreationRule _bombCreationRule;
+        private readonly IBombResolver _bombResolver;
 
         public CascadeSystem(
             IMatchDetector matchDetector,
             MatchClassifier matchClassifier,
             IGravitySystem gravitySystem,
-            IGemSpawner gemSpawner)
+            IGemSpawner gemSpawner,
+            IBombCreationRule bombCreationRule,
+            IBombResolver bombResolver)
         {
             _matchDetector = matchDetector;
             _matchClassifier = matchClassifier;
             _gravitySystem = gravitySystem;
             _gemSpawner = gemSpawner;
+            _bombCreationRule = bombCreationRule;
+            _bombResolver = bombResolver;
         }
 
-        public void Resolve(BoardState board)
+        private static Position? FindActualSwapOrigin(
+            IReadOnlyList<ClassifiedMatch> matches,
+            SwapContext context)
         {
+            if (!context.IsPlayerMove)
+                return null;
+
+            foreach (var match in matches)
+            {
+                if (match.Positions.Contains(context.SwapA))
+                    return context.SwapA;
+
+                if (match.Positions.Contains(context.SwapB))
+                    return context.SwapB;
+            }
+
+            return null;
+        }
+
+
+        public void Resolve(BoardState board, SwapContext context)
+        {
+            bool isPlayerMove = context.IsPlayerMove;
+
             while (true)
             {
-                // 1. Detect matches on the current board
                 var rawMatches = _matchDetector.Detect(board);
                 if (rawMatches.Count == 0)
                     break;
 
-                // 2. Classify matches (Line, L, T, overlapping, etc.)
+                // 1. Classify Matches
                 var classifiedMatches = _matchClassifier.Classify(rawMatches);
 
-                // 3. Remove matched gems
-                RemoveMatches(board, classifiedMatches);
+                Position? actualSwapOrigin =
+                    FindActualSwapOrigin(classifiedMatches, context);
 
-                // 4. Apply gravity
-                _gravitySystem.Apply(board);
+                BombCreationResult? bombToCreate = null;
 
-                // 5. Spawn new gems safely
-                _gemSpawner.Spawn(board);
-            }
-        }
-
-        private static void RemoveMatches(
-            BoardState board,
-            IReadOnlyList<ClassifiedMatch> matches)
-        {
-            foreach (var match in matches)
-            {
-                foreach (var position in match.Positions)
+                if (actualSwapOrigin.HasValue)
                 {
-                    board.ClearGem(position.X, position.Y);
+                    foreach (var match in classifiedMatches)
+                    {
+                        bombToCreate = _bombCreationRule.TryCreate(
+                            match,
+                            actualSwapOrigin.Value,
+                            isPlayerMove);
+
+                        if (bombToCreate != null)
+                            break;
+                    }
                 }
+
+                // 2. Build initial removal set
+                var toRemove = new HashSet<Position>();
+
+                foreach (var match in classifiedMatches)
+                {
+                    foreach (var pos in match.Positions)
+                    {
+                        var cell = board.GetCell(pos.X, pos.Y);
+
+                        // Color-aware bomb triggering
+                        if (!cell.IsEmpty &&
+                            cell.Gem.Type == GemType.Bomb &&
+                            cell.Gem.Color != match.Color)
+                        {
+                            continue; // bomb not triggered by wrong color
+                        }
+
+                        toRemove.Add(pos);
+                    }
+                }
+
+                // 3. Expand bomb explosions 
+                var queue = new Queue<Position>(toRemove);
+
+                while (queue.Count > 0)
+                {
+                    var pos = queue.Dequeue();
+                    var cell = board.GetCell(pos.X, pos.Y);
+
+                    if (cell.IsEmpty || cell.Gem.Type != GemType.Bomb)
+                        continue;
+
+                    var blast = _bombResolver.Resolve(board, pos);
+
+                    foreach (var blastPos in blast)
+                    {
+                        if (toRemove.Add(blastPos))
+                        {
+                            queue.Enqueue(blastPos);
+                        }
+                    }
+                }
+
+
+                // 4. Remove gems (except bomb replacement)
+                foreach (var pos in toRemove)
+                {
+                    board.ClearGem(pos.X, pos.Y);
+                }
+                
+                
+                // 5. Place bomb if created
+                if (bombToCreate != null)
+                {
+                    board.SetGem(
+                        bombToCreate.Position.X,
+                        bombToCreate.Position.Y,
+                        new GemState(bombToCreate.Color, GemType.Bomb));
+                }
+
+                // 6. Gravity + spawn
+                _gravitySystem.Apply(board);
+                _gemSpawner.Spawn(board);
+
+                // 7. After first iteration, everything is cascade
+                isPlayerMove = false;
             }
         }
     }
