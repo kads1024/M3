@@ -7,7 +7,9 @@ namespace M3.UnityAdapter
         private readonly float _cellSize;
         private readonly Vector3 _origin;
         private readonly BoardState _board;
-
+        
+        public float CellSize => _cellSize;
+        
         public BoardSpatialMap(BoardState board, float cellSize, Vector3 origin)
         {
             _board = board;
