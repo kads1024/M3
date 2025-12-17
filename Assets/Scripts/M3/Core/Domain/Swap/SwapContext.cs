@@ -18,7 +18,7 @@ namespace M3.Core.Domain.Swap
         public static SwapContext PlayerMove(Position a, Position b)
             => new SwapContext(true, a, b);
 
-        public static SwapContext Cascade()
+        public static SwapContext Cascade() 
             => new SwapContext(false, default, default);
     }
 }
