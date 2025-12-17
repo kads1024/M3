@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
 using M3.Core.Domain;
@@ -10,6 +11,7 @@ namespace M3.Application.Input
 {
     public sealed class BoardInputController : MonoBehaviour
     {
+
         [SerializeField] private Camera _camera;
 
         [Inject] private BoardInteractionService _interactionService;
@@ -65,7 +67,7 @@ namespace M3.Application.Input
             if (_selected == null)
             {
                 _selected = gridPos;
-                Debug.Log($"Selected {gridPos}");
+                Debug.Log($"Selected ({gridPos.X}, {gridPos.Y})");
             }
             else
             {
@@ -73,7 +75,7 @@ namespace M3.Application.Input
                 var to = gridPos;
 
                 var result = _interactionService.TrySwap(_board, from, to);
-                Debug.Log($"Swap {from} -> {to}: {result}");
+                Debug.Log($"Swap ({from.X}, {from.Y}) -> ({to.X}, {to.Y}): {result}");
 
                 _selected = null;
             }
