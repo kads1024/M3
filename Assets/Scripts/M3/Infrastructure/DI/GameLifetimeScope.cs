@@ -36,7 +36,6 @@ namespace M3.Infrastructure.DI
             builder.RegisterComponentInHierarchy<M3.Application.Bootstrap.BoardBootstrapper>();
             builder.RegisterComponentInHierarchy<M3.Presentation.Board.BoardView>();
             builder.RegisterComponentInHierarchy<M3.Application.Input.BoardInputController>();
-
         }
     }
 }

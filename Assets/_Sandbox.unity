@@ -169,7 +169,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1996205616}
+  - {fileID: 1038661656}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1038661655
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 1038661656}
   - component: {fileID: 1038661657}
   m_Layer: 0
-  m_Name: BoardBootstrapper
+  m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -198,11 +198,13 @@ Transform:
   m_GameObject: {fileID: 1038661655}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.07, y: -2.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1996205616}
+  m_Children:
+  - {fileID: 1414805153}
+  - {fileID: 1285724677}
+  m_Father: {fileID: 837454511}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1038661657
 MonoBehaviour:
@@ -216,9 +218,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc55d64db72ca774b9b152f95923a9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _seed: 0
+  _boardSeed: 0
   _width: 8
   _height: 8
+  _cellSize: 1
+  _boardOriginOffset: {x: 0, y: 0}
 --- !u!1 &1285724676
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,7 +253,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1996205616}
+  m_Father: {fileID: 1038661656}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1285724678
 MonoBehaviour:
@@ -264,7 +268,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 1603713920}
-  _cellSize: 1
 --- !u!1 &1414805152
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,11 +294,11 @@ Transform:
   m_GameObject: {fileID: 1414805152}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.5, y: -4.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1996205616}
+  m_Father: {fileID: 1038661656}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1414805154
 MonoBehaviour:
@@ -309,7 +312,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecb8e3e2ea4a1ff41a55c509e340bd26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cellSize: 1
 --- !u!1 &1603713918
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,40 +449,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!1 &1996205615
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1996205616}
-  m_Layer: 0
-  m_Name: Board
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1996205616
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1996205615}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1038661656}
-  - {fileID: 1414805153}
-  - {fileID: 1285724677}
-  m_Father: {fileID: 837454511}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

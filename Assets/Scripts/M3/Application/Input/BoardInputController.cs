@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 using VContainer;
 using M3.Core.Domain;
 using M3.Core.Application;
 using M3.Application.Bootstrap;
-using UnityEngine.InputSystem;
+using M3.UnityAdapter;
 
 namespace M3.Application.Input
 {
     public sealed class BoardInputController : MonoBehaviour
     {
         [SerializeField] private Camera _camera;
-        [SerializeField] private float _cellSize = 1f;
 
         [Inject] private BoardInteractionService _interactionService;
         [Inject] private BoardBootstrapper _bootstrapper;
+        private BoardSpatialMap _spatialMap;
 
         private BoardState _board;
         private BoardInputActions _input;
@@ -39,10 +40,17 @@ namespace M3.Application.Input
         private void Start()
         {
             _board = _bootstrapper.Board;
-
+            _spatialMap = _bootstrapper.SpatialMap;
+            
             if (_board == null)
             {
                 Debug.LogError("BoardInputController: BoardState is null");
+            }
+            
+            if (_spatialMap == null)
+            {
+                Debug.LogError("BoardView: BoardSpatialMap is null");
+                return;
             }
         }
 
@@ -51,9 +59,7 @@ namespace M3.Application.Input
             Vector2 screenPos = _input.Board.Position.ReadValue<Vector2>();
             Vector3 worldPos = _camera.ScreenToWorldPoint(screenPos);
 
-            var gridPos = WorldToGrid(worldPos);
-
-            if (!_board.IsInside(gridPos.X, gridPos.Y))
+            if (!_spatialMap.TryWorldToGrid(worldPos, out var gridPos))
                 return;
 
             if (_selected == null)
@@ -71,13 +77,6 @@ namespace M3.Application.Input
 
                 _selected = null;
             }
-        }
-
-        private Position WorldToGrid(Vector3 world)
-        {
-            int x = Mathf.FloorToInt(world.x / _cellSize);
-            int y = Mathf.FloorToInt(world.y / _cellSize);
-            return new Position(x, y);
         }
     }
 }
