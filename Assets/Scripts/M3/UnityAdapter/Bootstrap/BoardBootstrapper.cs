@@ -1,8 +1,7 @@
 using UnityEngine;
 using M3.Core.Domain;
-using M3.UnityAdapter;
 
-namespace M3.Application.Bootstrap
+namespace M3.UnityAdapter.Bootstrap
 {
     public sealed class BoardBootstrapper : MonoBehaviour
     {

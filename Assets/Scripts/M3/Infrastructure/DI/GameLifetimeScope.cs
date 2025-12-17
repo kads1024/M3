@@ -33,7 +33,7 @@ namespace M3.Infrastructure.DI
             
             // Unity Interaction Layer
             // builder.RegisterComponentInHierarchy<M3.Application.DIProbe>(); // Test if DI resolves correctly
-            builder.RegisterComponentInHierarchy<M3.Application.Bootstrap.BoardBootstrapper>();
+            builder.RegisterComponentInHierarchy<M3.UnityAdapter.Bootstrap.BoardBootstrapper>();
             builder.RegisterComponentInHierarchy<M3.Presentation.Board.BoardView>();
             builder.RegisterComponentInHierarchy<M3.Application.Input.BoardInputController>();
         }
