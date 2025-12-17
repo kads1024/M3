@@ -52,7 +52,8 @@ namespace M3.Presentation.Board
 
             go.transform.SetParent(transform);
             go.transform.position = _spatialMap.GridToWorld(pos);
-
+            go.transform.localScale *= _spatialMap.CellSize;
+            
             var renderer = go.GetComponent<Renderer>();
             renderer.material.color = ColorFor(gem.Color);
         }
