@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 using VContainer;
 using M3.Core.Domain;
 using M3.Core.Application;
-using M3.Application.Bootstrap;
+using M3.Presentation.Board;
+using M3.UnityAdapter.Bootstrap;
 using M3.UnityAdapter;
 
 namespace M3.Application.Input
@@ -16,6 +17,9 @@ namespace M3.Application.Input
 
         [Inject] private BoardInteractionService _interactionService;
         [Inject] private BoardBootstrapper _bootstrapper;
+        [Inject] private BoardView _boardView;
+        [Inject] private BoardResolutionCoordinator _coordinator;
+        
         private BoardSpatialMap _spatialMap;
 
         private BoardState _board;
@@ -74,10 +78,9 @@ namespace M3.Application.Input
                 var from = _selected.Value;
                 var to = gridPos;
 
-                var result = _interactionService.TrySwap(_board, from, to);
-                Debug.Log($"Swap ({from.X}, {from.Y}) -> ({to.X}, {to.Y}): {result}");
-
-                _selected = null;
+                _coordinator.TrySwap(_board, from, to);
+           
+                _selected = null;   
             }
         }
     }

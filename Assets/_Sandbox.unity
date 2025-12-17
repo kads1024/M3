@@ -155,7 +155,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  _gameSeed: 0
+  _gameSeed: 1
 --- !u!4 &837454511
 Transform:
   m_ObjectHideFlags: 0
@@ -198,7 +198,7 @@ Transform:
   m_GameObject: {fileID: 1038661655}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.48, y: -2.08, z: 0}
+  m_LocalPosition: {x: -6.56, y: -3.34, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -218,10 +218,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc55d64db72ca774b9b152f95923a9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boardSeed: 0
-  _width: 8
-  _height: 8
-  _cellSize: 0.7426
+  _boardSeed: 2
+  _width: 4
+  _height: 4
+  _cellSize: 0.7842
   _boardOriginOffset: {x: 0, y: 0}
 --- !u!1 &1285724676
 GameObject:
