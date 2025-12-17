@@ -1,3 +1,4 @@
+using M3.Application;
 using M3.Core.Application;
 using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
@@ -36,6 +37,7 @@ namespace M3.Infrastructure.DI
             builder.RegisterComponentInHierarchy<M3.UnityAdapter.Bootstrap.BoardBootstrapper>();
             builder.RegisterComponentInHierarchy<M3.Presentation.Board.BoardView>();
             builder.RegisterComponentInHierarchy<M3.Application.Input.BoardInputController>();
+            builder.Register<BoardResolutionCoordinator>(Lifetime.Singleton);
         }
     }
 }

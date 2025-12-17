@@ -18,6 +18,7 @@ namespace M3.Application.Input
         [Inject] private BoardInteractionService _interactionService;
         [Inject] private BoardBootstrapper _bootstrapper;
         [Inject] private BoardView _boardView;
+        [Inject] private BoardResolutionCoordinator _coordinator;
         
         private BoardSpatialMap _spatialMap;
 
@@ -77,14 +78,8 @@ namespace M3.Application.Input
                 var from = _selected.Value;
                 var to = gridPos;
 
-                var result = _interactionService.TrySwap(_board, from, to);
-                Debug.Log($"Swap ({from.X}, {from.Y}) -> ({to.X}, {to.Y}): {result}");
-                
-                if (result == SwapResult.Accepted)
-                {
-                    _boardView.SyncWithBoard();
-                }
-                
+                _coordinator.TrySwap(_board, from, to);
+           
                 _selected = null;   
             }
         }
