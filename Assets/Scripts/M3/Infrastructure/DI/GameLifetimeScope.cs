@@ -4,6 +4,7 @@ using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
 using M3.Core.Domain.Swap;
 using M3.Core.System;
+using M3.Presentation.Playback;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
@@ -37,7 +38,9 @@ namespace M3.Infrastructure.DI
             builder.RegisterComponentInHierarchy<M3.UnityAdapter.Bootstrap.BoardBootstrapper>();
             builder.RegisterComponentInHierarchy<M3.Presentation.Board.BoardView>();
             builder.RegisterComponentInHierarchy<M3.Application.Input.BoardInputController>();
+            builder.RegisterComponentInHierarchy<BoardResolutionPlayback>();
             builder.Register<BoardResolutionCoordinator>(Lifetime.Singleton);
+
         }
     }
 }

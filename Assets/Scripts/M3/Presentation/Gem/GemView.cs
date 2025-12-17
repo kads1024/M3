@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using M3.Core.Domain;
 
 namespace M3.Presentation.Gem
@@ -12,22 +13,38 @@ namespace M3.Presentation.Gem
             Position = position;
             UpdateVisual(state);
         }
-        
-        public void SetPosition(Position position)
+
+        public void SetLogicalPosition(Position position)
         {
             Position = position;
         }
-        
+
         public void UpdateVisual(GemState state)
         {
             var renderer = GetComponent<Renderer>();
             renderer.material.color = ColorFor(state.Color);
 
-            // TODO: differentiate bombs visually
             if (state.Type == GemType.Bomb)
-            {
                 renderer.material.color *= 0.6f;
+        }
+
+        // ======================
+        // 🎬 Animation primitive
+        // ======================
+        public IEnumerator AnimateMove(Vector3 target, float duration)
+        {
+            Vector3 start = transform.position;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                transform.position = Vector3.Lerp(start, target, t);
+                yield return null;
             }
+
+            transform.position = target;
         }
 
         private static Color ColorFor(GemColor color)

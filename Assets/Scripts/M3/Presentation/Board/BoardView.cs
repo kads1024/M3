@@ -5,6 +5,7 @@ using M3.Core.Domain;
 using M3.UnityAdapter.Bootstrap;
 using M3.UnityAdapter;
 using M3.Presentation.Gem;
+using M3.Presentation.Playback;
 
 namespace M3.Presentation.Board
 {
@@ -80,7 +81,7 @@ namespace M3.Presentation.Board
                 }
                 else
                 {
-                    view.SetPosition(pos);
+                    // view.SetPosition(pos);
                     view.UpdateVisual(cell.Gem);
                     view.transform.position = _spatialMap.GridToWorld(pos);
                 }
@@ -112,5 +113,34 @@ namespace M3.Presentation.Board
 
             return null;
         }
+        
+        public GemView GetGemViewAt(Position pos)
+        {
+            foreach (var view in _activeViews)
+            {
+                if (view.Position.Equals(pos))
+                    return view;
+            }
+            return null;
+        }
+        
+        public void ClearAllGemViews()
+        {
+            foreach (var view in _activeViews)
+                Destroy(view.gameObject);
+
+            _activeViews.Clear();
+        }
+
+        public void RenderFromSnapshot(BoardSnapshot snapshot)
+        {
+            foreach (var kv in snapshot.Cells)
+            {
+                var view = CreateGemView(kv.Key, kv.Value);
+                _activeViews.Add(view);
+            }
+        }
+
+
     }
 }
