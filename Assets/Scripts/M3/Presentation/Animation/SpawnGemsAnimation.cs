@@ -38,6 +38,9 @@ namespace M3.Presentation.Animation
             {
                 foreach (var gem in column.Gems)
                 {
+                    if (_boardSnapshot.Cells[gem.To].Type == GemType.Bomb) 
+                        continue;
+                    
                     // Create view using BoardView’s normal path
                     var view = _boardView.CreateGemView(gem.To, gem.Gem);
 

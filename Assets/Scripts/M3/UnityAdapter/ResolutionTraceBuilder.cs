@@ -36,12 +36,12 @@ namespace M3.UnityAdapter
                 var before = new BoardSnapshot(board);
 
 
-                bool resolved = _cascadeSystem.ResolveOneIteration(
+                var cascadeIterationResult = _cascadeSystem.ResolveOneIteration(
                     board,
                     context,ref isPlayerMove);
 
 
-                if (!resolved)
+                if (!cascadeIterationResult.Resolved)
                     break;
 
 
@@ -50,15 +50,20 @@ namespace M3.UnityAdapter
 
                 var cleared = ComputeClearedGemIds(before, after);
                 var gravity = ComputeGravity(before, after);
+                
+                
+                
 
-
+                
                 steps.Add(
                     new CascadeStep(
                         before,
                         after,
                         cleared,
                         gravity,
-                        bombTriggers: new List<BombTrigger>()));
+                        bombTriggers: new List<BombTrigger>(),
+                        cascadeIterationResult.BombPlacement)
+                    );
             }
 
 

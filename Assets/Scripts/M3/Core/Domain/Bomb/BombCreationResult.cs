@@ -4,11 +4,12 @@
     {
         public Position Position { get; }
         public GemColor Color { get; }
-
-        public BombCreationResult(Position position, GemColor color)
+        public int Id { get; }
+        public BombCreationResult(int id, Position position, GemColor color)
         {
             Position = position;
             Color = color;
+            Id = id;
         }
     }
 }

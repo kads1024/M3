@@ -4,6 +4,7 @@ using M3.Core.Domain;
 using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
 using M3.Core.Domain.Swap;
+using M3.UnityAdapter;
 
 namespace M3.Core.System
 {
@@ -56,28 +57,29 @@ namespace M3.Core.System
         {
             bool isPlayerMove = context.IsPlayerMove;
 
-            while (ResolveIteration(board, ref isPlayerMove, context))
+            while (ResolveIteration(board, ref isPlayerMove, context).Resolved)
             {
                 // loop until stable
             }
         }
-        public bool ResolveOneIteration(BoardState board, SwapContext context, ref bool isPlayerMove)
+        public CascadeIterationResult ResolveOneIteration(BoardState board, SwapContext context, ref bool isPlayerMove)
         {
             return ResolveIteration(board, ref isPlayerMove, context);
         }
 
-        private bool ResolveIteration(BoardState board, ref bool isPlayerMove, SwapContext context)
+        private CascadeIterationResult ResolveIteration(BoardState board, ref bool isPlayerMove, SwapContext context)
         {
+            BombPlacement? bombPlacement = null;
             var rawMatches = _matchDetector.Detect(board);
             if (rawMatches.Count == 0)
-                return false;
-
+                return new CascadeIterationResult(false, null);
+            
             var classifiedMatches = _matchClassifier.Classify(rawMatches);
 
             Position? actualSwapOrigin =
                 FindActualSwapOrigin(classifiedMatches, context);
-
-            BombCreationResult? bombToCreate = null;
+            BombCreationResult? bombToCreate = null;    
+            
 
             if (actualSwapOrigin.HasValue)
             {
@@ -89,7 +91,12 @@ namespace M3.Core.System
                         isPlayerMove);
 
                     if (bombToCreate != null)
-                        break;
+                    {
+                            bombPlacement = new BombPlacement(
+                                bombToCreate.Id,
+                                bombToCreate.Position);
+                        
+                    }
                 }
             }
 
@@ -150,7 +157,9 @@ namespace M3.Core.System
             _gemSpawner.Spawn(board);
 
             isPlayerMove = false;
-            return true;
+            return new CascadeIterationResult(
+                resolved: true,
+                bombPlacement: bombPlacement);
         }
     }
 }
