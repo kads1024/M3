@@ -83,16 +83,16 @@ namespace M3.Presentation.Playback
                     .Play();
                 
                 yield return new WaitForSeconds(2f);
-                //
-                // var gravityAnim = new GravitySequentialFallAnimation(
-                //     this,
-                //     boardView,
-                //     _bootstrapper.SpatialMap,
-                //     step.Gravity,
-                //     fallDuration: 0.25f,
-                //     delayBetween: 0.05f);
-                //
-                // yield return gravityAnim.Play();
+               
+                var gravityAnim = new GravityWithSequentialFallAnimation(
+                    this,
+                    boardView,
+                    _bootstrapper.SpatialMap,
+                    step.Gravity,
+                    fallDuration: 0.25f,
+                    delayBetween: 0.05f);
+
+                yield return gravityAnim.Play();
 
                 yield return new WaitForSeconds(0.1f);
             }

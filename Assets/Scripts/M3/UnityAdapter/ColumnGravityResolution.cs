@@ -6,15 +6,16 @@ namespace M3.UnityAdapter
 {
     public sealed class ColumnGravityResolution
     {
-        public int Column;
-        public IReadOnlyList<GemFall> Falls;
+        public int Column { get; }
+        public IReadOnlyList<GemFall> Falls { get; }
     }
 
     public sealed class GemFall
     {
-        public int GemId;
-        public Position From;
-        public Position To;
+        public int GemId { get; }
+        public Position From { get; }
+        public Position To { get; }
     }
+
     
 }

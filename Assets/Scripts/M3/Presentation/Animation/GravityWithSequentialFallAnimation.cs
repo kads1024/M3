@@ -7,7 +7,7 @@ using M3.Core.Domain;
 
 namespace M3.Presentation.Animation
 {
-    public sealed class GravityWithSpawnSequentialAnimation : IBoardAnimation
+    public sealed class GravityWithSequentialFallAnimation : IBoardAnimation
     {
         private readonly MonoBehaviour _host;
         private readonly BoardView _boardView;
@@ -16,7 +16,7 @@ namespace M3.Presentation.Animation
         private readonly float _fallDuration;
         private readonly float _delayBetween;
 
-        public GravityWithSpawnSequentialAnimation(
+        public GravityWithSequentialFallAnimation(
             MonoBehaviour host,
             BoardView boardView,
             BoardSpatialMap spatialMap,
@@ -36,24 +36,22 @@ namespace M3.Presentation.Animation
         {
             foreach (var column in _columns)
             {
-                // Bottom → top
+                // IMPORTANT: bottom → top
                 foreach (var fall in column.Falls)
                 {
                     var view = _boardView.GetGemViewById(fall.GemId);
-
-                    // Spawn case: no GemView yet
                     if (view == null)
-                    {
-                        //view = _boardView.CreateGemViewFromBoard(fall.GemId);
-                        view.transform.position =
-                            _spatialMap.GridToWorld(fall.From);
-                    }
+                        continue;
 
-                    // Update logical position immediately
-                    view.SetLogicalPosition(fall.To);
+                    // Compute target world position
+                    Vector3 target =
+                        _spatialMap.GridToWorld(fall.To);
 
-                    Vector3 target = _spatialMap.GridToWorld(fall.To);
+                    // Animate movement
                     yield return view.AnimateMove(target, _fallDuration);
+
+                    // Update logical position ONLY after landing
+                    view.SetLogicalPosition(fall.To);
 
                     yield return new WaitForSeconds(_delayBetween);
                 }
