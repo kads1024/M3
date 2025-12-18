@@ -12,7 +12,7 @@
         }
 
         public bool IsEmpty => Gem == null;
-
+        
         public void SetGem(GemState gem)
         {
             Gem = gem;

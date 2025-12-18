@@ -5,6 +5,7 @@ using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
 using M3.Core.Domain.Swap;
 using M3.Core.System;
+using M3.UnityAdapter;
 using UnityEngine;
 
 
@@ -103,9 +104,11 @@ namespace M3.Tests.Core.Application
                 LastContext = context;
             }
 
-            public bool ResolveOneIteration(BoardState board, SwapContext context, ref bool isPlayerMove)
+            public CascadeIterationResult ResolveOneIteration(BoardState board, SwapContext context, ref bool isPlayerMove)
             {
-                return false;
+                ResolveCallCount++;
+                LastContext = context;
+                return new CascadeIterationResult(false, null);
             }
         }
         

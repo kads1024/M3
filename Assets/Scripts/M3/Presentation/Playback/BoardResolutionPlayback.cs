@@ -71,8 +71,27 @@ namespace M3.Presentation.Playback
 
                 yield return new WaitForSeconds(0.1f);
 
+                if (step.BombPlacement != null)
+                {
+                    var bp = step.BombPlacement;
+
+                    // Create bomb view IN PLACE
+                    var bombGem = step.After.Cells[bp.Position];
+
+                    var view = boardView.CreateGemView(
+                        bp.Position,
+                        bombGem);
+
+                    view.SetLogicalPosition(bp.Position);
+
+                    view.transform.position =
+                        spatialMap.GridToWorld(bp.Position);
+                }
+                
+                yield return new WaitForSeconds(0.1f);
                 var spawns = SpawnDiff.Compute(step.Before, step.After);
 
+                
                 yield return new SpawnGemsAnimation(
                         this,
                         boardView,
@@ -83,6 +102,7 @@ namespace M3.Presentation.Playback
                     .Play();
                 
                 yield return new WaitForSeconds(2f);
+                
                
                 var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,

@@ -18,6 +18,7 @@ namespace M3.Core.Domain.Bomb
                 return null;
 
             return new BombCreationResult(
+                GemIdGenerator.Next(),
                 swapOrigin,
                 match.Color);
         }
