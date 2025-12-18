@@ -16,7 +16,7 @@ namespace M3.Presentation.Playback
     {
         [SerializeField] private float _swapDuration = 0.25f;
         [SerializeField] private float _postSwapDelay = 0.15f;
-        
+
         [Inject] private BoardBootstrapper _bootstrapper;
         [Inject] private ResolutionTraceBuilder _traceBuilder;
 
@@ -29,7 +29,7 @@ namespace M3.Presentation.Playback
             BoardSnapshot after)
         {
             var spatialMap = _bootstrapper.SpatialMap;
-            
+
             var gemA = boardView.GetGemViewAt(a);
             var gemB = boardView.GetGemViewAt(b);
 
@@ -48,6 +48,10 @@ namespace M3.Presentation.Playback
             if (!accepted)
                 yield break;
 
+            // Update logical positions immediately
+            gemA.SetLogicalPosition(b);
+            gemB.SetLogicalPosition(a);
+
 
             var trace = _traceBuilder.Build(
                 _bootstrapper.Board,
@@ -56,7 +60,6 @@ namespace M3.Presentation.Playback
 
             foreach (var step in trace.Steps)
             {
-
                 var clearedPositions = ResolveClearedPositions(step);
                 var clearAnim = new ClearGemsAnimation(
                     this,
@@ -85,9 +88,9 @@ namespace M3.Presentation.Playback
 // FINAL VISUAL SYNC
 
             boardView.ClearAllGemViews();
-            boardView.RenderFromSnapshot(after);
+            boardView.RenderFromSnapshot(trace.Final);
         }
-        
+
         private static List<Position> ResolveClearedPositions(
             CascadeStep step)
         {
@@ -103,6 +106,5 @@ namespace M3.Presentation.Playback
 
             return positions;
         }
-
     }
 }

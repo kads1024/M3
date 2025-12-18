@@ -27,10 +27,7 @@ namespace M3.Presentation.Gem
             if (state.Type == GemType.Bomb)
                 renderer.material.color *= 0.6f;
         }
-
-        // ======================
-        // 🎬 Animation primitive
-        // ======================
+        
         public IEnumerator AnimateMove(Vector3 target, float duration)
         {
             Vector3 start = transform.position;
