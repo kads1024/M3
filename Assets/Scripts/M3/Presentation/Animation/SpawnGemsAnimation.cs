@@ -34,8 +34,6 @@ namespace M3.Presentation.Animation
 
         public IEnumerator Play()
         {
-            var routines = new List<IEnumerator>();
-
             foreach (var column in _spawns)
             {
                 foreach (var gem in column.Gems)
@@ -63,11 +61,7 @@ namespace M3.Presentation.Animation
 
                 }
             }
-
-            if (routines.Count > 0)
-                yield return CoroutineUtil.RunParallel(
-                    _host,
-                    routines.ToArray());
+            yield break;
         }
     }
 }
