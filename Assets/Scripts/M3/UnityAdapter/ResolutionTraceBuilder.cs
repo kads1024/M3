@@ -90,26 +90,47 @@ namespace M3.UnityAdapter
         {
             var result = new List<ColumnGravityResolution>();
 
-
             for (int x = 0; x < before.Width; x++)
             {
-                var beforeIds = before.GetColumnGemIds(x);
-                var afterIds = after.GetColumnGemIds(x);
+                var falls = new List<GemFall>();
 
+                // Map gemId -> position before
+                var beforeColumn = before.Cells
+                    .Where(kv => kv.Key.X == x)
+                    .ToDictionary(kv => kv.Value.Id, kv => kv.Key);
 
-                if (beforeIds.SequenceEqual(afterIds))
+                // Map gemId -> position after
+                var afterColumn = after.Cells
+                    .Where(kv => kv.Key.X == x)
+                    .ToDictionary(kv => kv.Value.Id, kv => kv.Key);
+
+                foreach (var kv in afterColumn)
+                {
+                    int gemId = kv.Key;
+                    Position to = kv.Value;
+
+                    // If gem did not exist before, it spawned above the board
+                    if (!beforeColumn.TryGetValue(gemId, out var from))
+                    {
+                        from = new Position(x, after.Height); // spawn row
+                    }
+
+                    // If position changed, it fell
+                    if (!from.Equals(to))
+                    {
+                        falls.Add(new GemFall(gemId, from, to));
+                    }
+                }
+
+                if (falls.Count == 0)
                     continue;
 
+                // IMPORTANT: bottom → top order
+                falls.Sort((a, b) => a.To.Y.CompareTo(b.To.Y));
 
-                var spawned = afterIds
-                    .Except(beforeIds)
-                    .ToList();
-
-
-                //result.Add(
-                  //  new ColumnGravityResolution(afterIds, spawned));
+                result.Add(
+                    new ColumnGravityResolution(x, falls));
             }
-
 
             return result;
         }
