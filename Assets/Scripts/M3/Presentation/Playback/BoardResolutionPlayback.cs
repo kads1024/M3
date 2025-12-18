@@ -84,7 +84,7 @@ namespace M3.Presentation.Playback
                 
                 yield return new WaitForSeconds(2f);
                
-                var gravityAnim = new GravityWithSequentialFallAnimation(
+                var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,
                     boardView,
                     _bootstrapper.SpatialMap,
