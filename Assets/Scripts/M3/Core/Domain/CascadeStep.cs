@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using M3.Core.Domain;
-using M3.Core.Domain.Bomb;
-using M3.UnityAdapter;
 
-namespace M3.UnityAdapter
+using M3.Core.Domain.Bomb;
+
+
+namespace M3.Core.Domain
 {
     public sealed class CascadeStep
     {

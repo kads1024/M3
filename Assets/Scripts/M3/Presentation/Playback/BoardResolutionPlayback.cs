@@ -19,19 +19,17 @@ namespace M3.Presentation.Playback
 
         [Inject] private BoardBootstrapper _bootstrapper;
         [Inject] private ResolutionTraceBuilder _traceBuilder;
-
+        [Inject] private BoardView _boardView;
+        
         public IEnumerator PlaySwap(
             bool accepted,
             Position a,
-            Position b,
-            BoardView boardView,
-            BoardSnapshot before,
-            BoardSnapshot after)
+            Position b)
         {
             var spatialMap = _bootstrapper.SpatialMap;
 
-            var gemA = boardView.GetGemViewAt(a);
-            var gemB = boardView.GetGemViewAt(b);
+            var gemA = _boardView.GetGemViewAt(a);
+            var gemB = _boardView.GetGemViewAt(b);
 
             Vector3 aTarget = spatialMap.GridToWorld(b);
             Vector3 bTarget = spatialMap.GridToWorld(a);
@@ -64,7 +62,7 @@ namespace M3.Presentation.Playback
                 foreach (var trigger in step.BombTriggers)
                 {
                     var bombAnim = new BombTriggerAnimation(
-                        boardView,
+                        _boardView,
                         trigger,
                         neighborClearDelay: 2f,
                         bombClearDelay: 2f);
@@ -75,7 +73,7 @@ namespace M3.Presentation.Playback
                 var clearedPositions = ResolveClearedPositions(step);
                 var clearAnim = new ClearGemsAnimation(
                     this,
-                    boardView,
+                    _boardView,
                     clearedPositions,
                     2f);
 
@@ -92,7 +90,7 @@ namespace M3.Presentation.Playback
                     // Create bomb view IN PLACE
                     var bombGem = step.After.Cells[bp.Position];
 
-                    var view = boardView.CreateGemView(
+                    var view = _boardView.CreateGemView(
                         bp.Position,
                         bombGem);
 
@@ -108,7 +106,7 @@ namespace M3.Presentation.Playback
                 
                 yield return new SpawnGemsAnimation(
                         this,
-                        boardView,
+                        _boardView,
                         _bootstrapper.SpatialMap,
                         spawns,
                         spawnDuration: 2f,
@@ -120,7 +118,7 @@ namespace M3.Presentation.Playback
                
                 var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,
-                    boardView,
+                    _boardView,
                     _bootstrapper.SpatialMap,
                     step.Gravity,
                     fallDuration: 0.25f,
@@ -133,8 +131,8 @@ namespace M3.Presentation.Playback
 
 // FINAL VISUAL SYNC
 
-            boardView.ClearAllGemViews();
-            boardView.RenderFromSnapshot(trace.Final);
+            _boardView.ClearAllGemViews();
+            _boardView.RenderFromSnapshot(trace.Final);
         }
 
         private static List<Position> ResolveClearedPositions(

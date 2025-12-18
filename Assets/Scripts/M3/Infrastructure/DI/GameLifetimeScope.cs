@@ -25,7 +25,7 @@ namespace M3.Infrastructure.DI
             builder.Register<ISwapRule, AdjacentSwapRule>(Lifetime.Singleton);
             builder.Register<IBombCreationRule, BombCreationRule>(Lifetime.Singleton);
             builder.Register<IBombResolver, BombResolver>(Lifetime.Singleton);
-
+            builder.Register<M3.Core.Domain.ResolutionTraceBuilder>(Lifetime.Singleton);
             // Systems
             builder.Register<IGravitySystem, GravitySystem>(Lifetime.Singleton);
             builder.Register<IGemSpawner, GemSpawner>(Lifetime.Singleton).WithParameter("seed", _gameSeed);
@@ -41,7 +41,7 @@ namespace M3.Infrastructure.DI
             builder.RegisterComponentInHierarchy<M3.Application.Input.BoardInputController>();
             builder.RegisterComponentInHierarchy<BoardResolutionPlayback>();
             builder.Register<BoardResolutionCoordinator>(Lifetime.Singleton);
-            builder.Register<ResolutionTraceBuilder>(Lifetime.Singleton);
+            
         }
     }
 }

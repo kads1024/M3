@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using M3.Core.Domain;
 using UnityEngine;
 using M3.Presentation.Animation;
 using M3.Presentation.Board;

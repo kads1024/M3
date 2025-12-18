@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 
-using M3.UnityAdapter;
-
-
-namespace M3.UnityAdapter
+namespace M3.Core.Domain
 {
     public sealed class ResolutionTrace
     {
