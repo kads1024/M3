@@ -1,11 +1,11 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using M3.Core.Application;
 using M3.Core.Domain;
 using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Match;
 using M3.Core.Domain.Swap;
 using M3.Core.System;
-using M3.UnityAdapter;
 using UnityEngine;
 
 
@@ -108,7 +108,7 @@ namespace M3.Tests.Core.Application
             {
                 ResolveCallCount++;
                 LastContext = context;
-                return new CascadeIterationResult(false, null);
+                return new CascadeIterationResult(false, null, new List<BombTrigger>());
             }
         }
         

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using M3.Core.Domain;
+using M3.Core.Domain.Bomb;
 using M3.Core.Domain.Swap;
 using M3.Core.System;
 

@@ -1,6 +1,6 @@
 ﻿using M3.Core.Domain;
 
-namespace M3.UnityAdapter
+namespace M3.Core.Domain.Bomb
 {
     public sealed class BombPlacement
     {

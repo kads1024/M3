@@ -60,6 +60,18 @@ namespace M3.Presentation.Playback
 
             foreach (var step in trace.Steps)
             {
+                // Bomb triggers 
+                foreach (var trigger in step.BombTriggers)
+                {
+                    var bombAnim = new BombTriggerAnimation(
+                        boardView,
+                        trigger,
+                        neighborClearDelay: 2f,
+                        bombClearDelay: 2f);
+
+                    yield return bombAnim.Play();
+                }
+                
                 var clearedPositions = ResolveClearedPositions(step);
                 var clearAnim = new ClearGemsAnimation(
                     this,
@@ -70,8 +82,10 @@ namespace M3.Presentation.Playback
                 yield return clearAnim.Play();
 
                 yield return new WaitForSeconds(0.1f);
+                
+           
 
-                if (step.BombPlacement != null)
+            if (step.BombPlacement != null)
                 {
                     var bp = step.BombPlacement;
 
