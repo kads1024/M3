@@ -71,6 +71,18 @@ namespace M3.Presentation.Playback
 
                 yield return new WaitForSeconds(0.1f);
 
+                var spawns = SpawnDiff.Compute(step.Before, step.After);
+
+                yield return new SpawnGemsAnimation(
+                        this,
+                        boardView,
+                        _bootstrapper.SpatialMap,
+                        spawns,
+                        spawnDuration: 2f,
+                        step.After)
+                    .Play();
+                
+                yield return new WaitForSeconds(2f);
                 //
                 // var gravityAnim = new GravitySequentialFallAnimation(
                 //     this,

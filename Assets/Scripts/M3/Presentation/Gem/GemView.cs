@@ -7,10 +7,11 @@ namespace M3.Presentation.Gem
     public sealed class GemView : MonoBehaviour
     {
         public Position Position { get; private set; }
-
+        public GemState State { get; private set; }
         public void Initialize(Position position, GemState state)
         {
             Position = position;
+            State = state;
             UpdateVisual(state);
         }
 

@@ -73,7 +73,7 @@ namespace M3.UnityAdapter
             BoardSnapshot before,
             BoardSnapshot after)
         {
-            var afterIds = after.Cells.Values
+                var afterIds = after.Cells.Values
                 .Select(g => g.Id)
                 .ToHashSet();
 
@@ -106,8 +106,8 @@ namespace M3.UnityAdapter
                     .ToList();
 
 
-                result.Add(
-                    new ColumnGravityResolution(x, afterIds, spawned));
+                //result.Add(
+                  //  new ColumnGravityResolution(afterIds, spawned));
             }
 
 
