@@ -56,101 +56,101 @@ namespace M3.Core.System
         {
             bool isPlayerMove = context.IsPlayerMove;
 
-            while (true)
+            while (ResolveIteration(board, ref isPlayerMove, context))
             {
-                var rawMatches = _matchDetector.Detect(board);
-                if (rawMatches.Count == 0)
-                    break;
+                // loop until stable
+            }
+        }
+        public bool ResolveOneIteration(BoardState board, SwapContext context, ref bool isPlayerMove)
+        {
+            return ResolveIteration(board, ref isPlayerMove, context);
+        }
 
-                // 1. Classify Matches
-                var classifiedMatches = _matchClassifier.Classify(rawMatches);
+        private bool ResolveIteration(BoardState board, ref bool isPlayerMove, SwapContext context)
+        {
+            var rawMatches = _matchDetector.Detect(board);
+            if (rawMatches.Count == 0)
+                return false;
 
-                Position? actualSwapOrigin =
-                    FindActualSwapOrigin(classifiedMatches, context);
+            var classifiedMatches = _matchClassifier.Classify(rawMatches);
 
-                BombCreationResult? bombToCreate = null;
+            Position? actualSwapOrigin =
+                FindActualSwapOrigin(classifiedMatches, context);
 
-                if (actualSwapOrigin.HasValue)
-                {
-                    foreach (var match in classifiedMatches)
-                    {
-                        bombToCreate = _bombCreationRule.TryCreate(
-                            match,
-                            actualSwapOrigin.Value,
-                            isPlayerMove);
+            BombCreationResult? bombToCreate = null;
 
-                        if (bombToCreate != null)
-                            break;
-                    }
-                }
-
-                // 2. Build initial removal set
-                var toRemove = new HashSet<Position>();
-
+            if (actualSwapOrigin.HasValue)
+            {
                 foreach (var match in classifiedMatches)
                 {
-                    foreach (var pos in match.Positions)
-                    {
-                        var cell = board.GetCell(pos.X, pos.Y);
+                    bombToCreate = _bombCreationRule.TryCreate(
+                        match,
+                        actualSwapOrigin.Value,
+                        isPlayerMove);
 
-                        // Color-aware bomb triggering
-                        if (!cell.IsEmpty &&
-                            cell.Gem.Type == GemType.Bomb &&
-                            cell.Gem.Color != match.Color)
-                        {
-                            continue; // bomb not triggered by wrong color
-                        }
-
-                        toRemove.Add(pos);
-                    }
+                    if (bombToCreate != null)
+                        break;
                 }
+            }
 
-                // 3. Expand bomb explosions 
-                var queue = new Queue<Position>(toRemove);
+            var toRemove = new HashSet<Position>();
 
-                while (queue.Count > 0)
+            foreach (var match in classifiedMatches)
+            {
+                foreach (var pos in match.Positions)
                 {
-                    var pos = queue.Dequeue();
                     var cell = board.GetCell(pos.X, pos.Y);
 
-                    if (cell.IsEmpty || cell.Gem.Type != GemType.Bomb)
-                        continue;
-
-                    var blast = _bombResolver.Resolve(board, pos);
-
-                    foreach (var blastPos in blast)
+                    if (!cell.IsEmpty &&
+                        cell.Gem.Type == GemType.Bomb &&
+                        cell.Gem.Color != match.Color)
                     {
-                        if (toRemove.Add(blastPos))
-                        {
-                            queue.Enqueue(blastPos);
-                        }
+                        continue;
+                    }
+
+                    toRemove.Add(pos);
+                }
+            }
+
+            var queue = new Queue<Position>(toRemove);
+
+            while (queue.Count > 0)
+            {
+                var pos = queue.Dequeue();
+                var cell = board.GetCell(pos.X, pos.Y);
+
+                if (cell.IsEmpty || cell.Gem.Type != GemType.Bomb)
+                    continue;
+
+                var blast = _bombResolver.Resolve(board, pos);
+
+                foreach (var blastPos in blast)
+                {
+                    if (toRemove.Add(blastPos))
+                    {
+                        queue.Enqueue(blastPos);
                     }
                 }
-
-
-                // 4. Remove gems (except bomb replacement)
-                foreach (var pos in toRemove)
-                {
-                    board.ClearGem(pos.X, pos.Y);
-                }
-                
-                
-                // 5. Place bomb if created
-                if (bombToCreate != null)
-                {
-                    board.SetGem(
-                        bombToCreate.Position.X,
-                        bombToCreate.Position.Y,
-                        new GemState(bombToCreate.Color, GemType.Bomb));
-                }
-
-                // 6. Gravity + spawn
-                _gravitySystem.Apply(board);
-                _gemSpawner.Spawn(board);
-
-                // 7. After first iteration, everything is cascade
-                isPlayerMove = false;
             }
+
+            foreach (var pos in toRemove)
+            {
+                board.ClearGem(pos.X, pos.Y);
+            }
+
+            if (bombToCreate != null)
+            {
+                board.SetGem(
+                    bombToCreate.Position.X,
+                    bombToCreate.Position.Y,
+                    new GemState(bombToCreate.Color, GemType.Bomb));
+            }
+
+            _gravitySystem.Apply(board);
+            _gemSpawner.Spawn(board);
+
+            isPlayerMove = false;
+            return true;
         }
     }
 }
