@@ -32,8 +32,7 @@ namespace M3.Tests.Core.Application
             var swapRule = new AdjacentSwapRule(detector);
 
             return new BoardInteractionService(
-                swapRule,
-                cascade);
+                swapRule);
         }
         
         private static void AssertNoMatches(BoardState board)
@@ -94,6 +93,7 @@ namespace M3.Tests.Core.Application
         // TEST FOR WHEN CASCADE IS TRIGGERED BEHIND THE SCENES 
         private sealed class DummyCascadeSystem : ICascadeSystem
         {
+            private ICascadeSystem _cascadeSystemImplementation;
             public int ResolveCallCount { get; private set; }
             public SwapContext? LastContext { get; private set; }
 
@@ -101,6 +101,11 @@ namespace M3.Tests.Core.Application
             {
                 ResolveCallCount++;
                 LastContext = context;
+            }
+
+            public bool ResolveOneIteration(BoardState board, SwapContext context, ref bool isPlayerMove)
+            {
+                return false;
             }
         }
         
@@ -128,8 +133,7 @@ namespace M3.Tests.Core.Application
             var dummyCascadeSystem = new DummyCascadeSystem();
 
             var service = new BoardInteractionService(
-                swapRule,
-                dummyCascadeSystem);
+                swapRule);
 
             var result = service.TrySwap(
                 board,
@@ -154,8 +158,7 @@ namespace M3.Tests.Core.Application
             var dummyCascadeSystem = new DummyCascadeSystem();
 
             var service = new BoardInteractionService(
-                swapRule,
-                dummyCascadeSystem);
+                swapRule);
 
             var result = service.TrySwap(
                 board,
@@ -179,8 +182,7 @@ namespace M3.Tests.Core.Application
 
             var dummyCascadeSystem = new DummyCascadeSystem();
             var service = new BoardInteractionService(
-                new AdjacentSwapRule(new LineMatchDetector()),
-                dummyCascadeSystem);
+                new AdjacentSwapRule(new LineMatchDetector()));
 
             var a = new Position(2, 0);
             var b = new Position(2, 1);
@@ -293,8 +295,7 @@ namespace M3.Tests.Core.Application
                 new BombResolver());
 
             var interaction = new BoardInteractionService(
-                new AdjacentSwapRule(new LineMatchDetector()),
-                cascade);
+                new AdjacentSwapRule(new LineMatchDetector()));
 
             interaction.TrySwap(
                 board,

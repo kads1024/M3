@@ -15,7 +15,7 @@ namespace M3.Application.Input
 
         [SerializeField] private Camera _camera;
 
-        [Inject] private BoardInteractionService _interactionService;
+        // [Inject] private BoardInteractionService _interactionService;
         [Inject] private BoardBootstrapper _bootstrapper;
         [Inject] private BoardView _boardView;
         [Inject] private BoardResolutionCoordinator _coordinator;

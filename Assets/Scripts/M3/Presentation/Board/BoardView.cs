@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using VContainer;
 using System.Collections.Generic;
@@ -151,7 +152,5 @@ namespace M3.Presentation.Board
                 _activeViews.Add(view);
             }
         }
-
-
     }
 }

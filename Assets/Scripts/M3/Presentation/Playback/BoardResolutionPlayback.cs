@@ -1,8 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using M3.Core.Domain;
+using M3.Core.Domain.Swap;
 using M3.Presentation.Animation;
 using M3.Presentation.Board;
+using M3.UnityAdapter;
 using M3.UnityAdapter.Bootstrap;
 using VContainer;
 
@@ -15,7 +18,8 @@ namespace M3.Presentation.Playback
         [SerializeField] private float _postSwapDelay = 0.15f;
         
         [Inject] private BoardBootstrapper _bootstrapper;
-        
+        [Inject] private ResolutionTraceBuilder _traceBuilder;
+
         public IEnumerator PlaySwap(
             bool accepted,
             Position a,
@@ -44,36 +48,61 @@ namespace M3.Presentation.Playback
             if (!accepted)
                 yield break;
 
-            // STEP 1.5 — Clear animation (NEW)
-            var cleared = ClearDiff.Compute(before, after);
 
-            var clearAnim = new ClearGemsAnimation(
-                this,
-                boardView,
-                cleared,
-                2f);
-
-            yield return clearAnim.Play();
-
-            yield return new WaitForSeconds(2f);
-
-            // STEP 2 — gravity animation
-            var falls = GravityDiff.Compute(before, after);
-
-            var gravityAnim = new GravitySequentialFallAnimation(
-                this,
-                boardView,
-                spatialMap,
-                falls,
-                fallDuration: 0.25f,
-                delayBetween: 0.05f);
-
-            yield return gravityAnim.Play();
+            var trace = _traceBuilder.Build(
+                _bootstrapper.Board,
+                SwapContext.PlayerMove(a, b));
 
 
-            // VISUAL CLEANUP ONLY
+            foreach (var step in trace.Steps)
+            {
+
+                var clearedPositions = ResolveClearedPositions(step);
+                var clearAnim = new ClearGemsAnimation(
+                    this,
+                    boardView,
+                    clearedPositions,
+                    2f);
+
+                yield return clearAnim.Play();
+
+                yield return new WaitForSeconds(0.1f);
+
+                //
+                // var gravityAnim = new GravitySequentialFallAnimation(
+                //     this,
+                //     boardView,
+                //     _bootstrapper.SpatialMap,
+                //     step.Gravity,
+                //     fallDuration: 0.25f,
+                //     delayBetween: 0.05f);
+                //
+                // yield return gravityAnim.Play();
+
+                yield return new WaitForSeconds(0.1f);
+            }
+
+// FINAL VISUAL SYNC
+
             boardView.ClearAllGemViews();
             boardView.RenderFromSnapshot(after);
         }
+        
+        private static List<Position> ResolveClearedPositions(
+            CascadeStep step)
+        {
+            var positions = new List<Position>();
+
+            foreach (var gemId in step.ClearedGemIds)
+            {
+                if (step.Before.TryFindById(gemId, out var pos))
+                {
+                    positions.Add(pos);
+                }
+            }
+
+            return positions;
+        }
+
     }
 }
