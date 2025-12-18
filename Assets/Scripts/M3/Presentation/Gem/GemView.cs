@@ -47,6 +47,23 @@ namespace M3.Presentation.Gem
             transform.position = target;
         }
 
+        public IEnumerator AnimateScale(float from, float to, float duration)
+        {
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float scale = Mathf.Lerp(from, to, t);
+                transform.localScale = Vector3.one * scale;
+                yield return null;
+            }
+
+            transform.localScale = Vector3.one * to;
+        }
+
+        
         private static Color ColorFor(GemColor color)
         {
             return color switch

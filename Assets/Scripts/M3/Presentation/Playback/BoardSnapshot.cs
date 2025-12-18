@@ -21,5 +21,21 @@ namespace M3.Presentation.Playback
                 }
             }
         }
+        
+        public bool TryFindById(int id, out Position position)
+        {
+            foreach (var kv in Cells)
+            {
+                if (kv.Value.Id == id)
+                {
+                    position = kv.Key;
+                    return true;
+                }
+            }
+
+            position = default;
+            return false;
+        }
+
     }
 }

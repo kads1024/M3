@@ -39,6 +39,7 @@ namespace M3.Application
                         a,
                         b,
                         _boardView,
+                        before,
                         after));
             }
     }

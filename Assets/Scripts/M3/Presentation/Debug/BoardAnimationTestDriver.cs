@@ -3,6 +3,7 @@ using M3.Core.Domain;
 using M3.Presentation.Gem;
 using M3.Presentation.Animation;
 using M3.Presentation.Board;
+using M3.Presentation.Playback;
 using M3.UnityAdapter;
 
 namespace M3.Presentation.Debug
@@ -60,6 +61,25 @@ namespace M3.Presentation.Debug
             StartCoroutine(anim.Play());
         }
 
+        // [ContextMenu("Test Gravity Group Fall")]
+        // public void TestGravityGroupFall()
+        // {
+        //     var before = new BoardSnapshot(_boardView);
+        //     // Manually modify board visually or via test setup
+        //     var after = new BoardSnapshot(_boardView.Board);
+        //
+        //     var falls = GravityDiff.Compute(before, after);
+        //
+        //     var anim = new GravityGroupFallAnimation(
+        //         this,
+        //         _boardView,
+        //         _spatialMap,
+        //         falls,
+        //         0.3f);
+        //
+        //     StartCoroutine(anim.Play());
+        // }
+        
         // =========================
         // Helpers
         // =========================
@@ -77,5 +97,6 @@ namespace M3.Presentation.Debug
 
             return true;
         }
+        
     }
 }

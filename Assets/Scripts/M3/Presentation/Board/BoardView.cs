@@ -114,6 +114,7 @@ namespace M3.Presentation.Board
             return null;
         }
         
+        
         public GemView GetGemViewAt(Position pos)
         {
             foreach (var view in _activeViews)
@@ -132,6 +133,16 @@ namespace M3.Presentation.Board
             _activeViews.Clear();
         }
 
+        public void DestroyGemViewAt(Position pos)
+        {
+            var view = GetGemViewAt(pos);
+            if (view == null)
+                return;
+
+            _activeViews.Remove(view);
+            Destroy(view.gameObject);
+        }
+        
         public void RenderFromSnapshot(BoardSnapshot snapshot)
         {
             foreach (var kv in snapshot.Cells)

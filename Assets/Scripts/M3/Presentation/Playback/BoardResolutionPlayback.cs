@@ -21,7 +21,8 @@ namespace M3.Presentation.Playback
             Position a,
             Position b,
             BoardView boardView,
-            BoardSnapshot finalState)
+            BoardSnapshot before,
+            BoardSnapshot after)
         {
             var spatialMap = _bootstrapper.SpatialMap;
             
@@ -43,9 +44,36 @@ namespace M3.Presentation.Playback
             if (!accepted)
                 yield break;
 
+            // STEP 1.5 — Clear animation (NEW)
+            var cleared = ClearDiff.Compute(before, after);
+
+            var clearAnim = new ClearGemsAnimation(
+                this,
+                boardView,
+                cleared,
+                2f);
+
+            yield return clearAnim.Play();
+
+            yield return new WaitForSeconds(2f);
+
+            // STEP 2 — gravity animation
+            var falls = GravityDiff.Compute(before, after);
+
+            var gravityAnim = new GravitySequentialFallAnimation(
+                this,
+                boardView,
+                spatialMap,
+                falls,
+                fallDuration: 0.25f,
+                delayBetween: 0.05f);
+
+            yield return gravityAnim.Play();
+
+
             // VISUAL CLEANUP ONLY
             boardView.ClearAllGemViews();
-            boardView.RenderFromSnapshot(finalState);
+            boardView.RenderFromSnapshot(after);
         }
     }
 }
