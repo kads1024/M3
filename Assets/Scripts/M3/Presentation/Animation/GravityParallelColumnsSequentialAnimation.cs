@@ -7,7 +7,7 @@ using M3.Core.Domain;
 
 namespace M3.Presentation.Animation
 {
-    public sealed class GravityWithSequentialFallAnimation : IBoardAnimation
+    public sealed class GravityParallelColumnsSequentialAnimation : IBoardAnimation
     {
         private readonly MonoBehaviour _host;
         private readonly BoardView _boardView;
@@ -16,7 +16,7 @@ namespace M3.Presentation.Animation
         private readonly float _fallDuration;
         private readonly float _delayBetween;
 
-        public GravityWithSequentialFallAnimation(
+        public GravityParallelColumnsSequentialAnimation(
             MonoBehaviour host,
             BoardView boardView,
             BoardSpatialMap spatialMap,
@@ -34,27 +34,38 @@ namespace M3.Presentation.Animation
 
         public IEnumerator Play()
         {
+            var columnRoutines = new List<IEnumerator>();
+
             foreach (var column in _columns)
             {
-                // IMPORTANT: bottom → top
-                foreach (var fall in column.Falls)
-                {
-                    var view = _boardView.GetGemViewById(fall.GemId);
-                    if (view == null)
-                        continue;
+                columnRoutines.Add(
+                    PlayColumn(column));
+            }
 
-                    // Compute target world position
-                    Vector3 target =
-                        _spatialMap.GridToWorld(fall.To);
+            // Run ALL columns at the same time
+            yield return CoroutineUtil.RunParallel(
+                _host,
+                columnRoutines.ToArray());
+        }
 
-                    // Animate movement
-                    yield return view.AnimateMove(target, _fallDuration);
+        private IEnumerator PlayColumn(ColumnGravityResolution column)
+        {
+            foreach (var fall in column.Falls)
+            {
+                var view = _boardView.GetGemViewById(fall.GemId);
+                if (view == null)
+                    continue;
 
-                    // Update logical position ONLY after landing
-                    view.SetLogicalPosition(fall.To);
+                Vector3 target =
+                    _spatialMap.GridToWorld(fall.To);
 
-                    yield return new WaitForSeconds(_delayBetween);
-                }
+                // Animate fall
+                yield return view.AnimateMove(target, _fallDuration);
+
+                // Update logical position after landing
+                view.SetLogicalPosition(fall.To);
+
+                yield return new WaitForSeconds(_delayBetween);
             }
         }
     }
