@@ -26,77 +26,77 @@ namespace M3.Presentation.Debug
         // =========================
         // Test Buttons
         // =========================
-
-        [ContextMenu("Test Swap Accepted")]
-        public void TestSwapAccepted()
-        {
-            if (!TryGetGems(out var a, out var b))
-                return;
-
-            var anim = new SwapAcceptedAnimation(
-                this,
-                a,
-                b,
-                _spatialMap.GridToWorld(new Position(_toX, _toY)),
-                _spatialMap.GridToWorld(new Position(_fromX, _fromY)),
-                _swapDuration);
-
-            StartCoroutine(anim.Play());
-        }
-
-        [ContextMenu("Test Swap Rejected")]
-        public void TestSwapRejected()
-        {
-            if (!TryGetGems(out var a, out var b))
-                return;
-
-            var anim = new SwapRejectedAnimation(
-                this,
-                a,
-                b,
-                _spatialMap.GridToWorld(new Position(_toX, _toY)),
-                _spatialMap.GridToWorld(new Position(_fromX, _fromY)),
-                _swapDuration);
-
-            StartCoroutine(anim.Play());
-        }
-
-        // [ContextMenu("Test Gravity Group Fall")]
-        // public void TestGravityGroupFall()
+        //
+        // [ContextMenu("Test Swap Accepted")]
+        // public void TestSwapAccepted()
         // {
-        //     var before = new BoardSnapshot(_boardView);
-        //     // Manually modify board visually or via test setup
-        //     var after = new BoardSnapshot(_boardView.Board);
+        //     if (!TryGetGems(out var a, out var b))
+        //         return;
         //
-        //     var falls = GravityDiff.Compute(before, after);
-        //
-        //     var anim = new GravityGroupFallAnimation(
+        //     var anim = new SwapAcceptedAnimation(
         //         this,
-        //         _boardView,
-        //         _spatialMap,
-        //         falls,
-        //         0.3f);
+        //         a,
+        //         b,
+        //         _spatialMap.GridToWorld(new Position(_toX, _toY)),
+        //         _spatialMap.GridToWorld(new Position(_fromX, _fromY)),
+        //         _swapDuration);
         //
         //     StartCoroutine(anim.Play());
         // }
-        
-        // =========================
-        // Helpers
-        // =========================
-
-        private bool TryGetGems(out GemView a, out GemView b)
-        {
-            a = _boardView.GetGemViewAt(new Position(_fromX, _fromY));
-            b = _boardView.GetGemViewAt(new Position(_toX, _toY));
-
-            if (a == null || b == null)
-            {
-                UnityEngine.Debug.LogWarning("Invalid positions: GemView not found.");
-                return false;
-            }
-
-            return true;
-        }
-        
+        //
+        // [ContextMenu("Test Swap Rejected")]
+        // public void TestSwapRejected()
+        // {
+        //     if (!TryGetGems(out var a, out var b))
+        //         return;
+        //
+        //     var anim = new SwapRejectedAnimation(
+        //         this,
+        //         a,
+        //         b,
+        //         _spatialMap.GridToWorld(new Position(_toX, _toY)),
+        //         _spatialMap.GridToWorld(new Position(_fromX, _fromY)),
+        //         _swapDuration);
+        //
+        //     StartCoroutine(anim.Play());
+        // }
+        //
+        // // [ContextMenu("Test Gravity Group Fall")]
+        // // public void TestGravityGroupFall()
+        // // {
+        // //     var before = new BoardSnapshot(_boardView);
+        // //     // Manually modify board visually or via test setup
+        // //     var after = new BoardSnapshot(_boardView.Board);
+        // //
+        // //     var falls = GravityDiff.Compute(before, after);
+        // //
+        // //     var anim = new GravityGroupFallAnimation(
+        // //         this,
+        // //         _boardView,
+        // //         _spatialMap,
+        // //         falls,
+        // //         0.3f);
+        // //
+        // //     StartCoroutine(anim.Play());
+        // // }
+        //
+        // // =========================
+        // // Helpers
+        // // =========================
+        //
+        // private bool TryGetGems(out GemView a, out GemView b)
+        // {
+        //     a = _boardView.GetGemViewAt(new Position(_fromX, _fromY));
+        //     b = _boardView.GetGemViewAt(new Position(_toX, _toY));
+        //
+        //     if (a == null || b == null)
+        //     {
+        //         UnityEngine.Debug.LogWarning("Invalid positions: GemView not found.");
+        //         return false;
+        //     }
+        //
+        //     return true;
+        // }
+        //
     }
 }

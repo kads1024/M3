@@ -29,7 +29,7 @@ namespace M3.Presentation.Playback
             BoardAnimationSequence sequence,
             BoardAnimationContext context)
         {
-            foreach (var step in sequence.Steps)
+            foreach (var step in sequence.ResolutionAnimationSteps)
             {
                 var runtime = step.CreateRuntime(context);
                 if (runtime != null)
@@ -50,10 +50,7 @@ namespace M3.Presentation.Playback
             Vector3 aTarget = spatialMap.GridToWorld(b);
             Vector3 bTarget = spatialMap.GridToWorld(a);
 
-            IBoardAnimation anim =
-                accepted
-                    ? new SwapAcceptedAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration)
-                    : new SwapRejectedAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration);
+            IBoardAnimation anim = new SwapAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration, accepted);
 
             yield return anim.Play();
 
