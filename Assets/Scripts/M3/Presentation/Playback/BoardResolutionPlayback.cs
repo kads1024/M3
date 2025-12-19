@@ -8,7 +8,6 @@ using M3.Presentation.Animation;
 using M3.Presentation.Animation.Utils;
 using M3.Presentation.Board;
 
-using M3.UnityAdapter.Bootstrap;
 using VContainer;
 
 
@@ -20,11 +19,12 @@ namespace M3.Presentation.Playback
         
         [SerializeField] private float _swapDuration = 0.25f;
         [SerializeField] private float _postSwapDelay = 0.15f;
-    
-        [Inject] private BoardBootstrapper _bootstrapper;
+        
         [Inject] private ResolutionTraceBuilder _traceBuilder;
         [Inject] private BoardView _boardView;
-
+        [Inject] private BoardSpatialMap _spatialMap;
+        [Inject] private BoardState _board;
+        
         public IEnumerator PlaySequence(
             BoardAnimationSequence sequence,
             BoardAnimationContext context)
@@ -42,13 +42,11 @@ namespace M3.Presentation.Playback
             Position a,
             Position b)
         {
-            var spatialMap = _bootstrapper.SpatialMap;
-
             var gemA = _boardView.GetGemViewAt(a);
             var gemB = _boardView.GetGemViewAt(b);
 
-            Vector3 aTarget = spatialMap.GridToWorld(b);
-            Vector3 bTarget = spatialMap.GridToWorld(a);
+            Vector3 aTarget = _spatialMap.GridToWorld(b);
+            Vector3 bTarget = _spatialMap.GridToWorld(a);
 
             IBoardAnimation anim = new SwapAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration, accepted);
 
@@ -65,7 +63,7 @@ namespace M3.Presentation.Playback
 
 
             var trace = _traceBuilder.Build(
-                _bootstrapper.Board,
+                _board,
                 SwapContext.PlayerMove(a, b));
 
 
@@ -88,7 +86,7 @@ namespace M3.Presentation.Playback
                     this,
                     _boardView,
                     clearedPositions,
-                    2f);
+                    0.1f);
 
                 yield return clearAnim.Play();
 
@@ -110,7 +108,7 @@ namespace M3.Presentation.Playback
                     view.SetLogicalPosition(bp.Position);
 
                     view.transform.position =
-                        spatialMap.GridToWorld(bp.Position);
+                        _spatialMap.GridToWorld(bp.Position);
                 }
                 
                 yield return new WaitForSeconds(0.1f);
@@ -120,21 +118,21 @@ namespace M3.Presentation.Playback
                 yield return new SpawnGemsAnimation(
                         this,
                         _boardView,
-                        _bootstrapper.SpatialMap,
+                        _spatialMap,
                         spawns,
-                        spawnDuration: 2f,
+                        spawnDuration: 0.1f,
                         step.After)
                     .Play();
                 
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(0.1f);
                 
                
                 var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,
                     _boardView,
-                    _bootstrapper.SpatialMap,
+                    _spatialMap,
                     step.Gravity,
-                    fallDuration: 0.25f,
+                    fallDuration: 0.1f,
                     delayBetween: 0.05f);
 
                 yield return gravityAnim.Play();

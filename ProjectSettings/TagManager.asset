@@ -41,3 +41,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Gem
+    uniqueID: 2037590759
+    locked: 0

@@ -1,9 +1,7 @@
 using M3.Core.Application;
 using M3.Core.Domain;
-using M3.Core.Domain.Swap;
 using M3.Presentation.Board;
 using M3.Presentation.Playback;
-using M3.UnityAdapter;
 
 namespace M3.Application
 {

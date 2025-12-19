@@ -3,8 +3,6 @@ using UnityEngine;
 using VContainer;
 using System.Collections.Generic;
 using M3.Core.Domain;
-using M3.UnityAdapter.Bootstrap;
-using M3.UnityAdapter;
 using M3.Presentation.Gem;
 using M3.Presentation.Playback;
 
@@ -15,19 +13,15 @@ namespace M3.Presentation.Board
         [SerializeField] private GemView _gemPrefab;
         private GemViewPool _pool; // BoardView Owns the pool. So no need to inject
         
-        [Inject] private BoardBootstrapper _bootstrapper;
 
-        private BoardState _board;
-        private BoardSpatialMap _spatialMap;
+        [Inject] private BoardState _board;
+        [Inject] private BoardSpatialMap _spatialMap;
 
         // Identity-based tracking
         private readonly List<GemView> _activeViews = new();
 
         private void Start()
         {
-            _board = _bootstrapper.Board;
-            _spatialMap = _bootstrapper.SpatialMap;
-
             _pool = new GemViewPool(_gemPrefab, transform);
             
             RenderInitialBoard();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using M3.Presentation.Board;
-using M3.UnityAdapter;
+
 using M3.Core.Domain;
 
 namespace M3.Presentation.Animation
