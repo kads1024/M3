@@ -15,7 +15,7 @@ namespace M3.UnityAdapter.Bootstrap
         [SerializeField] private Vector2 _boardOriginOffset = Vector3.zero;
 
         private BoardState _board;
-        private BoardSpatialMap _spatialMap;
+        private BoardSpatialMap _spatialMap; // BoardView Owns the pool. So no need to inject
         
         public BoardState Board => _board;
         

@@ -12,6 +12,9 @@ namespace M3.Presentation.Board
 {
     public sealed class BoardView : MonoBehaviour
     {
+        [SerializeField] private GemView _gemPrefab;
+        private GemViewPool _pool; // BoardView Owns the pool. So no need to inject
+        
         [Inject] private BoardBootstrapper _bootstrapper;
 
         private BoardState _board;
@@ -25,6 +28,8 @@ namespace M3.Presentation.Board
             _board = _bootstrapper.Board;
             _spatialMap = _bootstrapper.SpatialMap;
 
+            _pool = new GemViewPool(_gemPrefab, transform);
+            
             RenderInitialBoard();
         }
 
@@ -46,17 +51,15 @@ namespace M3.Presentation.Board
 
         public GemView CreateGemView(Position pos, GemState gem)
         {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            go.name = $"GemView ({pos.X},{pos.Y})";
-            go.transform.SetParent(transform);
+            var view = _pool.Get();
 
-            var view = go.AddComponent<GemView>();
             view.Initialize(pos, gem);
 
-            go.transform.position = _spatialMap.GridToWorld(pos);
-            go.transform.localScale *= _spatialMap.CellSize;
+            view.transform.position = _spatialMap.GridToWorld(pos);
+            view.transform.localScale = Vector3.one * _spatialMap.CellSize;
+            view.transform.SetParent(transform);
+
             _activeViews.Add(view);
-            
             return view;
         }
         
@@ -130,7 +133,7 @@ namespace M3.Presentation.Board
         {
             foreach (var view in _activeViews)
             {
-                if (view.State.Id == id)
+                if (view.State.Id == id)        
                     return view;
             }
             return null;
@@ -138,9 +141,7 @@ namespace M3.Presentation.Board
         
         public void ClearAllGemViews()
         {
-            foreach (var view in _activeViews)
-                Destroy(view.gameObject);
-
+            _pool.ReleaseAll(_activeViews);
             _activeViews.Clear();
         }
 
@@ -151,7 +152,7 @@ namespace M3.Presentation.Board
                 return;
 
             _activeViews.Remove(view);
-            Destroy(view.gameObject);
+            _pool.Release(view);
         }
         
         public void RenderFromSnapshot(BoardSnapshot snapshot)

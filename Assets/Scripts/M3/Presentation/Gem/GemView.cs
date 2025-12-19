@@ -8,6 +8,8 @@ namespace M3.Presentation.Gem
     {
         public Position Position { get; private set; }
         public GemState State { get; private set; }
+      
+        
         public void Initialize(Position position, GemState state)
         {
             Position = position;
@@ -59,6 +61,17 @@ namespace M3.Presentation.Gem
             }
 
             transform.localScale = Vector3.one * to;
+        }
+
+        public void ResetView()
+        {
+            // Clear references
+            State = null;
+            Position = default;
+
+            // Reset transform
+            transform.localScale = Vector3.one;
+            transform.rotation = Quaternion.identity;
         }
 
         
