@@ -495,6 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac8c58a11ea4d8482be2934e750ba28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animationSequence: {fileID: 11400000, guid: 02f96e9dda8e15343a758498afed043c, type: 2}
   _swapDuration: 1
   _postSwapDelay: 1
 --- !u!1 &1961026144

@@ -1,0 +1,11 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace M3.Presentation.Animation.Utils
+{
+    [CreateAssetMenu(menuName = "Board Animations/Animation Sequence")]
+    public sealed class BoardAnimationSequence : ScriptableObject
+    {
+        public List<BoardAnimationStep> Steps;
+    }
+}

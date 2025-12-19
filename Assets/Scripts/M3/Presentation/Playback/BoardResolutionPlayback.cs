@@ -1,11 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using M3.Core.Domain;
 using M3.Core.Domain.Swap;
 using M3.Presentation.Animation;
+using M3.Presentation.Animation.Utils;
 using M3.Presentation.Board;
-using M3.UnityAdapter;
+
 using M3.UnityAdapter.Bootstrap;
 using VContainer;
 
@@ -14,12 +16,26 @@ namespace M3.Presentation.Playback
 {
     public sealed class BoardResolutionPlayback : MonoBehaviour
     {
+        [SerializeField] private BoardAnimationSequence _animationSequence;
+        
         [SerializeField] private float _swapDuration = 0.25f;
         [SerializeField] private float _postSwapDelay = 0.15f;
-
+    
         [Inject] private BoardBootstrapper _bootstrapper;
         [Inject] private ResolutionTraceBuilder _traceBuilder;
         [Inject] private BoardView _boardView;
+
+        public IEnumerator PlaySequence(
+            BoardAnimationSequence sequence,
+            BoardAnimationContext context)
+        {
+            foreach (var step in sequence.Steps)
+            {
+                var runtime = step.CreateRuntime(context);
+                if (runtime != null)
+                    yield return runtime.Play();
+            }
+        }
         
         public IEnumerator PlaySwap(
             bool accepted,
