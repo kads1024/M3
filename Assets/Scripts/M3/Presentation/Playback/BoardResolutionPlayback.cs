@@ -132,7 +132,7 @@ namespace M3.Presentation.Playback
                     _boardView,
                     _spatialMap,
                     step.Gravity,
-                    fallDuration: 0.1f,
+                    fallDuration: 0.25f,
                     delayBetween: 0.05f);
 
                 yield return gravityAnim.Play();

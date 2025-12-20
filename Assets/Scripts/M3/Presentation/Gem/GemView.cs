@@ -1,17 +1,33 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using M3.Core.Domain;
+using M3.Utils;
+using UnityEditor;
+
+[Serializable] public class GemSpriteDictionary : SerializableDictionary<GemColor, Sprite> { }
+[CustomPropertyDrawer(typeof(GemSpriteDictionary))] public class GemSpriteDictionaryDrawer : DictionaryDrawer<GemColor, Sprite> { }
 
 namespace M3.Presentation.Gem
 {
     public sealed class GemView : MonoBehaviour
     {
+        [SerializeField] private GemSpriteDictionary _gemSprites;
+        [SerializeField] private Sprite _bombSprite;
+        
         public Position Position { get; private set; }
         public GemState State { get; private set; }
-      
         
+        private SpriteRenderer _renderer ;
+
+        private void Awake()
+        {
+            _renderer = GetComponent<SpriteRenderer>();
+        }
+
         public void Initialize(Position position, GemState state)
         {
+            _renderer.color = Color.white;
             Position = position;
             State = state;
             UpdateVisual(state);
@@ -22,13 +38,16 @@ namespace M3.Presentation.Gem
             Position = position;
         }
 
-        public void UpdateVisual(GemState state)
+        private void UpdateVisual(GemState state)
         {
-            var renderer = GetComponent<Renderer>();
-            renderer.material.color = ColorFor(state.Color);
-
+            _renderer.sprite = _gemSprites[state.Color];
+            
             if (state.Type == GemType.Bomb)
-                renderer.material.color *= 0.6f;
+            {
+                _renderer.sprite = _bombSprite;
+                _renderer.color = ColorFor(state.Color);
+            }
+                
         }
         
         public IEnumerator AnimateMove(Vector3 target, float duration)
@@ -73,7 +92,6 @@ namespace M3.Presentation.Gem
             transform.localScale = Vector3.one;
             transform.rotation = Quaternion.identity;
         }
-
         
         private static Color ColorFor(GemColor color)
         {

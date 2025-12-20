@@ -143,3 +143,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a3559837e436c64180221349fb62b76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gemSprites:
+    _Buckets: 0400000003000000020000000100000000000000ffffffffffffffff
+    _HashCodes: 04000000030000000200000001000000000000000000000000000000
+    _Next: ffffffffffffffffffffffffffffffffffffffff0000000000000000
+    _Count: 5
+    _Version: 19
+    _FreeList: -1
+    _FreeCount: 0
+    _Keys: 04000000030000000200000001000000000000000000000000000000
+    _Values:
+    - {fileID: 21300000, guid: fa67839330996764683a123cb35a1ea8, type: 3}
+    - {fileID: 21300000, guid: 6bb7c00a68de1634cbee8574d8499804, type: 3}
+    - {fileID: 21300000, guid: d184668e3ca69674d8a20a99d14eb1d2, type: 3}
+    - {fileID: 21300000, guid: 6a4836de24a0c354f986c800d32b7c86, type: 3}
+    - {fileID: 21300000, guid: 15913fd90bd479a45a568c3067a75c5d, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+  _bombSprite: {fileID: 21300000, guid: d1c82e015b38d4448bc1ba5e3eff90fa, type: 3}
