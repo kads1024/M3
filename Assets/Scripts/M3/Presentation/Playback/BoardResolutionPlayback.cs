@@ -132,8 +132,8 @@ namespace M3.Presentation.Playback
                     _boardView,
                     _spatialMap,
                     step.Gravity,
-                    fallDuration: 0.1f,
-                    delayBetween: 0.0f);
+                    fallDuration: 0.33f,
+                    delayBetween: 0.1f);
 
                 yield return gravityAnim.Play();
 
@@ -146,6 +146,7 @@ namespace M3.Presentation.Playback
             _boardView.RenderFromSnapshot(trace.Final);
         }
 
+        
         private static List<Position> ResolveClearedPositions(
             CascadeStep step)
         {
