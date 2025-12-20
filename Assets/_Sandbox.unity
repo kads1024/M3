@@ -157,8 +157,8 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _boardSeed: 2
   _gemSpawnSeed: 0
-  _width: 10
-  _height: 10
+  _width: 5
+  _height: 5
   _cellSize: 1
   _boardOriginOffset: {x: 0, y: 0}
 --- !u!4 &837454511
@@ -270,6 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gemPrefab: {fileID: 1674953665273633562, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
+  _cellSprite: {fileID: 21300000, guid: 4f16045d4f71d7f4ab9ba3fac18d412f, type: 3}
 --- !u!1 &1603713918
 GameObject:
   m_ObjectHideFlags: 0
@@ -498,71 +499,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8989cfee84601dd45850fb6514a2816e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &2202885165228694148
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 818879230352827397, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_Name
-      value: GemView
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1315432799065033803, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674953665273633562, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
-      propertyPath: _bombSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: d1c82e015b38d4448bc1ba5e3eff90fa, type: 3}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 05b5e394e9d9c57418f73a748a4e57aa, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1603713921}
   - {fileID: 837454511}
-  - {fileID: 2202885165228694148}

@@ -60,7 +60,7 @@ namespace M3.Presentation.Animation
                     _spatialMap.GridToWorld(fall.To);
 
                 // Animate fall
-                view.AnimateMove(target, _fallDuration);
+                yield return view.AnimateMove(target, _fallDuration);
 
                 // Update logical position after landing
                 view.SetLogicalPosition(fall.To);

@@ -12,7 +12,7 @@ namespace M3.Presentation.Board
     {
         [SerializeField] private GemView _gemPrefab;
         private GemViewPool _pool; // BoardView Owns the pool. So no need to inject
-        
+        [SerializeField] private Sprite _cellSprite;
 
         [Inject] private BoardState _board;
         [Inject] private BoardSpatialMap _spatialMap;
@@ -24,6 +24,7 @@ namespace M3.Presentation.Board
         {
             _pool = new GemViewPool(_gemPrefab, transform);
             
+            RenderCells();
             RenderInitialBoard();
         }
 
@@ -56,6 +57,26 @@ namespace M3.Presentation.Board
             _activeViews.Add(view);
             return view;
         }
+        
+        private void RenderCells()
+        {
+            for (int x = 0; x < _board.Width; x++)
+            for (int y = 0; y < _board.Height; y++)
+            {
+                var pos = new Position(x, y);
+
+                var go = new GameObject($"Cell ({x},{y})");
+                go.transform.SetParent(transform);
+
+                var renderer = go.AddComponent<SpriteRenderer>();
+                renderer.sprite = _cellSprite;
+                renderer.sortingOrder = 0; // behind gems
+
+                go.transform.position = _spatialMap.GridToWorld(pos);
+                go.transform.localScale = Vector3.one * _spatialMap.CellSize;
+            }
+        }
+
         
         // public void SyncWithBoard()
         // {
