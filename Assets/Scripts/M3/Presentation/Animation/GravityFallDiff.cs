@@ -2,7 +2,6 @@
 using System.Linq;
 using M3.Core.Domain;
 using M3.Presentation.Playback;
-using M3.UnityAdapter;
 
 namespace M3.Presentation.Animation
 {

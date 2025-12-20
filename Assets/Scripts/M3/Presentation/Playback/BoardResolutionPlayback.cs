@@ -1,12 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using M3.Core.Domain;
 using M3.Core.Domain.Swap;
 using M3.Presentation.Animation;
+using M3.Presentation.Animation.Utils;
 using M3.Presentation.Board;
-using M3.UnityAdapter;
-using M3.UnityAdapter.Bootstrap;
+
 using VContainer;
 
 
@@ -14,30 +15,40 @@ namespace M3.Presentation.Playback
 {
     public sealed class BoardResolutionPlayback : MonoBehaviour
     {
+        [SerializeField] private BoardAnimationSequence _animationSequence;
+        
         [SerializeField] private float _swapDuration = 0.25f;
         [SerializeField] private float _postSwapDelay = 0.15f;
-
-        [Inject] private BoardBootstrapper _bootstrapper;
+        
         [Inject] private ResolutionTraceBuilder _traceBuilder;
         [Inject] private BoardView _boardView;
+        [Inject] private BoardSpatialMap _spatialMap;
+        [Inject] private BoardState _board;
+        
+        public IEnumerator PlaySequence(
+            BoardAnimationSequence sequence,
+            BoardAnimationContext context)
+        {
+            foreach (var step in sequence.ResolutionAnimationSteps)
+            {
+                var runtime = step.CreateRuntime(context);
+                if (runtime != null)
+                    yield return runtime.Play();
+            }
+        }
         
         public IEnumerator PlaySwap(
             bool accepted,
             Position a,
             Position b)
         {
-            var spatialMap = _bootstrapper.SpatialMap;
-
             var gemA = _boardView.GetGemViewAt(a);
             var gemB = _boardView.GetGemViewAt(b);
 
-            Vector3 aTarget = spatialMap.GridToWorld(b);
-            Vector3 bTarget = spatialMap.GridToWorld(a);
+            Vector3 aTarget = _spatialMap.GridToWorld(b);
+            Vector3 bTarget = _spatialMap.GridToWorld(a);
 
-            IBoardAnimation anim =
-                accepted
-                    ? new SwapAcceptedAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration)
-                    : new SwapRejectedAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration);
+            IBoardAnimation anim = new SwapAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration, accepted);
 
             yield return anim.Play();
 
@@ -52,7 +63,7 @@ namespace M3.Presentation.Playback
 
 
             var trace = _traceBuilder.Build(
-                _bootstrapper.Board,
+                _board,
                 SwapContext.PlayerMove(a, b));
 
 
@@ -75,7 +86,7 @@ namespace M3.Presentation.Playback
                     this,
                     _boardView,
                     clearedPositions,
-                    2f);
+                    0.1f);
 
                 yield return clearAnim.Play();
 
@@ -97,7 +108,7 @@ namespace M3.Presentation.Playback
                     view.SetLogicalPosition(bp.Position);
 
                     view.transform.position =
-                        spatialMap.GridToWorld(bp.Position);
+                        _spatialMap.GridToWorld(bp.Position);
                 }
                 
                 yield return new WaitForSeconds(0.1f);
@@ -107,22 +118,22 @@ namespace M3.Presentation.Playback
                 yield return new SpawnGemsAnimation(
                         this,
                         _boardView,
-                        _bootstrapper.SpatialMap,
+                        _spatialMap,
                         spawns,
-                        spawnDuration: 2f,
+                        spawnDuration: 0.1f,
                         step.After)
                     .Play();
                 
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(0.1f);
                 
                
                 var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,
                     _boardView,
-                    _bootstrapper.SpatialMap,
+                    _spatialMap,
                     step.Gravity,
-                    fallDuration: 0.25f,
-                    delayBetween: 0.05f);
+                    fallDuration: 0.33f,
+                    delayBetween: 0.1f);
 
                 yield return gravityAnim.Play();
 
@@ -135,6 +146,7 @@ namespace M3.Presentation.Playback
             _boardView.RenderFromSnapshot(trace.Final);
         }
 
+        
         private static List<Position> ResolveClearedPositions(
             CascadeStep step)
         {

@@ -2,16 +2,32 @@ using UnityEngine;
 using System.Collections;
 using M3.Core.Domain;
 
+
+
 namespace M3.Presentation.Gem
 {
     public sealed class GemView : MonoBehaviour
     {
+        [SerializeField] private Sprite _bombSprite;
+        
         public Position Position { get; private set; }
         public GemState State { get; private set; }
-        public void Initialize(Position position, GemState state)
+        
+        private SpriteRenderer _renderer ;
+
+        private Sprite _sprite;
+        private ParticleSystem _destroyEffect;
+        
+        private void Awake()
+        {
+            _renderer = GetComponent<SpriteRenderer>();
+        }
+
+        public void Initialize(Position position, GemState state, Sprite sprite, ParticleSystem destroyEffect)
         {
             Position = position;
-            State = state;
+            _sprite = sprite;
+            _destroyEffect = destroyEffect;
             UpdateVisual(state);
         }
 
@@ -20,13 +36,17 @@ namespace M3.Presentation.Gem
             Position = position;
         }
 
-        public void UpdateVisual(GemState state)
+        private void UpdateVisual(GemState state)
         {
-            var renderer = GetComponent<Renderer>();
-            renderer.material.color = ColorFor(state.Color);
-
+            _renderer.sprite = _sprite;
+            
             if (state.Type == GemType.Bomb)
-                renderer.material.color *= 0.6f;
+            {
+                _renderer.sprite = _bombSprite;
+                _renderer.color = ColorFor(state.Color);
+            }
+            
+            State = state;
         }
         
         public IEnumerator AnimateMove(Vector3 target, float duration)
@@ -45,6 +65,12 @@ namespace M3.Presentation.Gem
             transform.position = target;
         }
 
+        public IEnumerator ClearGem(float duration)
+        {
+            Instantiate(_destroyEffect, transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(duration);
+        }
+        
         public IEnumerator AnimateScale(float from, float to, float duration)
         {
             float elapsed = 0f;
@@ -61,6 +87,19 @@ namespace M3.Presentation.Gem
             transform.localScale = Vector3.one * to;
         }
 
+        public void ResetView()
+        {
+            // Clear references
+            State = null;
+            Position = default;
+
+            // Reset transform
+            transform.localScale = Vector3.one;
+            transform.rotation = Quaternion.identity;
+            _sprite = null;
+            _destroyEffect = null;
+            _renderer.color = Color.white;
+        }
         
         private static Color ColorFor(GemColor color)
         {

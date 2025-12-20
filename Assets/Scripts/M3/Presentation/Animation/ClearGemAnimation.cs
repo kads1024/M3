@@ -36,7 +36,7 @@ namespace M3.Presentation.Animation
                 if (view == null)
                     continue;
 
-                routines.Add(view.AnimateScale(1f, 0f, _duration));
+                routines.Add(view.ClearGem(_duration));
             }
 
             if (routines.Count > 0)

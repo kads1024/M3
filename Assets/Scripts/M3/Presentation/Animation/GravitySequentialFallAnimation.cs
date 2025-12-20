@@ -6,7 +6,7 @@ using UnityEngine;
 using M3.Presentation.Animation;
 using M3.Presentation.Board;
 using M3.Presentation.Gem;
-using M3.UnityAdapter;
+
 
 namespace M3.Presentation.Playback
 {

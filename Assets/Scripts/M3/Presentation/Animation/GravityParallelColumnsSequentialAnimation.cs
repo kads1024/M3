@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using M3.Presentation.Board;
-using M3.UnityAdapter;
+
 using M3.Core.Domain;
+using M3.Presentation.Gem;
 
 namespace M3.Presentation.Animation
 {
@@ -48,24 +49,41 @@ namespace M3.Presentation.Animation
                 columnRoutines.ToArray());
         }
 
+        private IEnumerator FallGem(
+            GemView view,
+            Position to,
+            Vector3 target)
+        {
+            yield return view.AnimateMove(target, _fallDuration);
+            view.SetLogicalPosition(to);
+        }
+        
         private IEnumerator PlayColumn(ColumnGravityResolution column)
         {
+            var running = new List<Coroutine>();
+
             foreach (var fall in column.Falls)
             {
                 var view = _boardView.GetGemViewById(fall.GemId);
                 if (view == null)
                     continue;
 
-                Vector3 target =
-                    _spatialMap.GridToWorld(fall.To);
+                Vector3 target = _spatialMap.GridToWorld(fall.To);
 
-                // Animate fall
-                yield return view.AnimateMove(target, _fallDuration);
+                // START falling immediately
+                var coroutine = _host.StartCoroutine(
+                    FallGem(view, fall.To, target));
 
-                // Update logical position after landing
-                view.SetLogicalPosition(fall.To);
+                running.Add(coroutine);
 
+                // Delay before NEXT gem starts falling
                 yield return new WaitForSeconds(_delayBetween);
+            }
+
+            // Wait until all started falls complete
+            foreach (var coroutine in running)
+            {
+                yield return coroutine;
             }
         }
     }
