@@ -36,7 +36,7 @@ namespace M3.Core.System
         {
             bool isPlayerMove = context.IsPlayerMove;
 
-            while (ResolveIteration(board, context, ref isPlayerMove).Resolved)
+            while (ResolveIteration(board, context, ref isPlayerMove).Unresolved)
             {
                 // loop until stable
             }
@@ -177,7 +177,7 @@ namespace M3.Core.System
             isPlayerMove = false;
 
             return new CascadeIterationResult(
-                resolved: true,
+                unresolved: true,
                 bombPlacement: bombPlacement,
                 bombTrigger: bombTriggers);
         }

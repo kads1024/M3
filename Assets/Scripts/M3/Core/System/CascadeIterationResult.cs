@@ -5,15 +5,15 @@ namespace M3.Core.System
 {
     public sealed class CascadeIterationResult
     {
-        public bool Resolved { get; }
+        public bool Unresolved { get; }
         public BombPlacement? BombPlacement { get; }
         public List<BombTrigger> BombTriggers { get; }
         public CascadeIterationResult(
-            bool resolved,
+            bool unresolved,
             BombPlacement? bombPlacement,
             List<BombTrigger> bombTrigger)
         {
-            Resolved = resolved;
+            Unresolved = unresolved;
             BombPlacement = bombPlacement;
             BombTriggers = bombTrigger;
         }

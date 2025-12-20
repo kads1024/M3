@@ -224,9 +224,9 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _boardSeed: 2
-  _gemSpawnSeed: 0
-  _width: 5
-  _height: 5
+  _gemSpawnSeed: 1
+  _width: 10
+  _height: 10
   _cellSize: 1
   _boardOriginOffset: {x: 0, y: 0}
 --- !u!4 &837454511

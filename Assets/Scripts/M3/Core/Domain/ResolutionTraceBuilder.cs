@@ -42,7 +42,7 @@ namespace M3.Core.Domain
                     context,ref isPlayerMove);
 
 
-                if (!cascadeIterationResult.Resolved)
+                if (!cascadeIterationResult.Unresolved)
                     break;
 
 
@@ -62,7 +62,7 @@ namespace M3.Core.Domain
                         after,
                         cleared,
                         gravity,
-                        bombTriggers: new List<BombTrigger>(),
+                        bombTriggers: cascadeIterationResult.BombTriggers,
                         cascadeIterationResult.BombPlacement)
                     );
             }

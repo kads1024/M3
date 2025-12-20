@@ -26,15 +26,6 @@ namespace M3.Presentation.Animation
 
         public IEnumerator Play()
         {
-            //  Clear the bomb LAST
-            var bombView = _boardView.GetGemViewById(_trigger.BombGemId);
-            if (bombView != null)
-            {
-                _boardView.DestroyGemViewAt(bombView.Position);
-            }
-
-            yield return new WaitForSeconds(_bombClearDelay);
-            
             // Clear neighbors FIRST
             foreach (var gemId in _trigger.AffectedGemIds)
             {
@@ -46,7 +37,14 @@ namespace M3.Presentation.Animation
             }
 
             yield return new WaitForSeconds(_neighborClearDelay);
+//  Clear the bomb LAST
+            var bombView = _boardView.GetGemViewById(_trigger.BombGemId);
+            if (bombView != null)
+            {
+                _boardView.DestroyGemViewAt(bombView.Position);
+            }
 
+            yield return new WaitForSeconds(_bombClearDelay);
             
         }
     }
