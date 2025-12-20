@@ -10,6 +10,10 @@ namespace M3.Presentation.Board
 {
     public sealed class BoardView : MonoBehaviour
     {
+        [SerializeField] private Sprite _boardBackgroundSprite;
+        [SerializeField] private Color _boardBackgroundColor = Color.white;
+        [SerializeField] private float _backgroundPadding = 0.2f; // extra space around cells
+        
         [SerializeField] private GemView _gemPrefab;
         private GemViewPool _pool; // BoardView Owns the pool. So no need to inject
         [SerializeField] private Sprite _cellSprite;
@@ -23,11 +27,40 @@ namespace M3.Presentation.Board
         private void Start()
         {
             _pool = new GemViewPool(_gemPrefab, transform);
-            
+            RenderBoardBackground();
             RenderCells();
             RenderInitialBoard();
         }
 
+        private void RenderBoardBackground()
+        {
+            float width  = _board.Width  * _spatialMap.CellSize;
+            float height = _board.Height * _spatialMap.CellSize;
+
+            var bg = new GameObject("BoardBackground");
+            bg.transform.SetParent(transform);
+
+            var renderer = bg.AddComponent<SpriteRenderer>();
+            renderer.sprite = _boardBackgroundSprite;
+            renderer.color = _boardBackgroundColor;
+            renderer.sortingOrder = -10; // behind everything
+
+            // Center of the board
+            Vector3 center = _spatialMap.Origin +
+                             new Vector3(
+                                 width  * 0.5f,
+                                 height * 0.5f,
+                                 0f);
+
+            bg.transform.position = center;
+
+            // Scale background to fit board
+            bg.transform.localScale = new Vector3(
+                width  + _backgroundPadding,
+                height + _backgroundPadding,
+                1f);
+        }
+        
         private void RenderInitialBoard()
         {
             _activeViews.Clear();

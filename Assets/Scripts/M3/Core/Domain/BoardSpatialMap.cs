@@ -12,6 +12,7 @@ namespace M3.Core.Domain
         private readonly float _halfCell;
 
         public float CellSize => _cellSize;
+        public Vector3 Origin => _origin;
         
         public BoardSpatialMap(BoardState board, float cellSize, Vector3 origin)
         {
