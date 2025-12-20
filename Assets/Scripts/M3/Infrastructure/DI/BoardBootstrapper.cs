@@ -55,10 +55,10 @@ namespace M3.Infrastructure.DI
             
             // Unity Interaction Layer
             // builder.RegisterComponentInHierarchy<M3.Application.DIProbe>(); // Test if DI resolves correctly
+            builder.RegisterComponentInHierarchy<AssetManager>();
             builder.RegisterComponentInHierarchy<BoardView>();
             builder.RegisterComponentInHierarchy<BoardInputController>();
             builder.RegisterComponentInHierarchy<BoardResolutionPlayback>();
-            builder.RegisterComponentInHierarchy<AssetManager>();
             builder.Register<BoardResolutionCoordinator>(Lifetime.Singleton);
             builder.RegisterInstance(_board);
             builder.RegisterInstance(_spatialMap);

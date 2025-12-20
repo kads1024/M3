@@ -1,15 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using M3.Core.Domain;
-using VContainer;
+
 
 
 namespace M3.Presentation.Gem
 {
     public sealed class GemView : MonoBehaviour
     {
-        [Inject] private AssetManager _assetManager;
-
         [SerializeField] private Sprite _bombSprite;
         
         public Position Position { get; private set; }
@@ -17,14 +15,19 @@ namespace M3.Presentation.Gem
         
         private SpriteRenderer _renderer ;
 
+        private Sprite _sprite;
+        private ParticleSystem _destroyEffect;
+        
         private void Awake()
         {
             _renderer = GetComponent<SpriteRenderer>();
         }
 
-        public void Initialize(Position position, GemState state)
+        public void Initialize(Position position, GemState state, Sprite sprite, ParticleSystem destroyEffect)
         {
             Position = position;
+            _sprite = sprite;
+            _destroyEffect = destroyEffect;
             UpdateVisual(state);
         }
 
@@ -35,7 +38,7 @@ namespace M3.Presentation.Gem
 
         private void UpdateVisual(GemState state)
         {
-            _renderer.sprite = _assetManager.GetGemSprite(state.Color);
+            _renderer.sprite = _sprite;
             
             if (state.Type == GemType.Bomb)
             {
@@ -64,9 +67,10 @@ namespace M3.Presentation.Gem
 
         public IEnumerator ClearGem(float duration)
         {
-            Instantiate(_assetManager.GetDestroyEffect(State.Color), transform.position, Quaternion.identity);
+            Instantiate(_destroyEffect, transform.position, Quaternion.identity);
             yield return new WaitForSeconds(duration);
         }
+        
         public IEnumerator AnimateScale(float from, float to, float duration)
         {
             float elapsed = 0f;
@@ -92,7 +96,8 @@ namespace M3.Presentation.Gem
             // Reset transform
             transform.localScale = Vector3.one;
             transform.rotation = Quaternion.identity;
-            
+            _sprite = null;
+            _destroyEffect = null;
             _renderer.color = Color.white;
         }
         

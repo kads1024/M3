@@ -20,7 +20,8 @@ namespace M3.Presentation.Board
 
         [Inject] private BoardState _board;
         [Inject] private BoardSpatialMap _spatialMap;
-
+        [Inject] private AssetManager _assetManager;
+        
         // Identity-based tracking
         private readonly List<GemView> _activeViews = new();
 
@@ -45,6 +46,15 @@ namespace M3.Presentation.Board
             renderer.color = _boardBackgroundColor;
             renderer.sortingOrder = -10; // behind everything
 
+            // SpriteMask (clipping)
+            var mask = bg.AddComponent<SpriteMask>();
+            mask.sprite = _boardBackgroundSprite;
+            mask.isCustomRangeActive = true;
+            
+            // Mask only affects gems/cells
+            mask.frontSortingOrder = 10;
+            mask.backSortingOrder  = -1;
+            
             // Center of the board
             Vector3 center = _spatialMap.Origin +
                              new Vector3(
@@ -81,7 +91,7 @@ namespace M3.Presentation.Board
         {
             var view = _pool.Get();
 
-            view.Initialize(pos, gem);
+            view.Initialize(pos, gem, _assetManager.GetGemSprite(gem.Color), _assetManager.GetDestroyEffect(gem.Color));
 
             view.transform.position = _spatialMap.GridToWorld(pos);
             view.transform.localScale = Vector3.one * _spatialMap.CellSize;
