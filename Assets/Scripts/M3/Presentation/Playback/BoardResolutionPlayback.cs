@@ -97,12 +97,12 @@ namespace M3.Presentation.Playback
                 
            
 
-            if (step.BombPlacement != null)
+                if (step.BombPlacement != null)
                 {
                     var bp = step.BombPlacement;
 
                     // Create bomb view IN PLACE
-                    var bombGem = step.After.Cells[bp.Position];
+                    var bombGem = step.After.Cells[step.After.CellsById[bp.BombGemId]];
 
                     var view = _boardView.CreateGemView(
                         bp.Position,

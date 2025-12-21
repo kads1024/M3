@@ -64,7 +64,7 @@ namespace M3.Core.System
             BombCreationResult? bombToCreate = null;
             BombPlacement? bombPlacement = null;
 
-            if (isPlayerMove)
+            //if (isPlayerMove)
             {
                 var swapOrigin = FindActualSwapOrigin(classifiedMatches, context);
 
@@ -75,7 +75,8 @@ namespace M3.Core.System
                         bombToCreate = _bombCreationRule.TryCreate(
                             match,
                             swapOrigin.Value,
-                            isPlayerMove);
+                            isPlayerMove,
+                            GemIdGenerator.Next());
 
                         if (bombToCreate != null)
                         {
@@ -150,7 +151,7 @@ namespace M3.Core.System
                 board.SetGem(
                     bombToCreate.Position.X,
                     bombToCreate.Position.Y,
-                    new GemState(bombToCreate.Color, GemType.Bomb));
+                    new GemState(bombToCreate.Color, GemType.Bomb, bombToCreate.Id));
             }
             
             _gravitySystem.Apply(board);

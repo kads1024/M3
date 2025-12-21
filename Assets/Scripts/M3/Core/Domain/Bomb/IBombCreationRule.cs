@@ -7,6 +7,7 @@ namespace M3.Core.Domain.Bomb
         BombCreationResult? TryCreate(
             ClassifiedMatch match,
             Position swapOrigin,
-            bool isPlayerMove);
+            bool isPlayerMove, 
+            int Id);
     }
 }

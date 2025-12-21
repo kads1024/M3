@@ -223,8 +223,8 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  _boardSeed: 2
-  _gemSpawnSeed: 1
+  _boardSeed: 12314
+  _gemSpawnSeed: 214
   _width: 10
   _height: 10
   _cellSize: 1
@@ -527,9 +527,9 @@ MonoBehaviour:
   _postSwapDelay: 0.1
   _clearDuration: 0.25
   _postClearDelay: 0.15
-  _preNeighborExplodeDelay: 1
-  _neighborExplodeDuration: 0.1
-  _preBombClearDelay: 1
+  _preNeighborExplodeDelay: 2
+  _neighborExplodeDuration: 0
+  _preBombClearDelay: 2
   _postBombPlacementDelay: 0.15
   _fallDuration: 0.25
   _delayBetweenGem: 0.15

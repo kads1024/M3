@@ -9,7 +9,8 @@ namespace M3.Core.Domain.Bomb
         public BombCreationResult? TryCreate(
             ClassifiedMatch match,
             Position swapOrigin,
-            bool isPlayerMove)
+            bool isPlayerMove,
+            int Id)
         {
             if (!isPlayerMove)
                 return null;
@@ -18,7 +19,7 @@ namespace M3.Core.Domain.Bomb
                 return null;
 
             return new BombCreationResult(
-                GemIdGenerator.Next(),
+                Id,
                 swapOrigin,
                 match.Color);
         }

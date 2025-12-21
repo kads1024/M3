@@ -6,9 +6,9 @@
         public GemColor Color { get; }
         public GemType Type { get; }
 
-        public GemState(GemColor color, GemType type)
+        public GemState(GemColor color, GemType type, int id = -67)
         {
-            Id = GemIdGenerator.Next();
+            Id = id == -67 ? GemIdGenerator.Next() : id;
             Color = color;
             Type = type;
         }

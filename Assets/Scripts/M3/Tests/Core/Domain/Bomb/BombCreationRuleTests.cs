@@ -30,7 +30,7 @@ namespace M3.Tests.Core.Domain.Bomb
             var match = CreateMatch(GemColor.Red, 4);
             var swapOrigin = new Position(1, 1);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: false);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: false, GemIdGenerator.Next());
 
             Assert.IsNull(result);
         }
@@ -43,7 +43,7 @@ namespace M3.Tests.Core.Domain.Bomb
             var match = CreateMatch(GemColor.Blue, 3);
             var swapOrigin = new Position(0, 0);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true, GemIdGenerator.Next());
 
             Assert.IsNull(result);
         }
@@ -56,7 +56,7 @@ namespace M3.Tests.Core.Domain.Bomb
             var match = CreateMatch(GemColor.Green, 4);
             var swapOrigin = new Position(2, 3);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true, GemIdGenerator.Next());
 
             Assert.IsNotNull(result);
             Assert.AreEqual(swapOrigin, result!.Position);
@@ -70,7 +70,7 @@ namespace M3.Tests.Core.Domain.Bomb
             var match = CreateMatch(GemColor.Yellow, 5);
             var swapOrigin = new Position(1, 2);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true, GemIdGenerator.Next());
 
             Assert.AreEqual(GemColor.Yellow, result!.Color);
         }
@@ -96,7 +96,7 @@ namespace M3.Tests.Core.Domain.Bomb
 
             var swapOrigin = new Position(1, 1);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true, GemIdGenerator.Next());
 
             Assert.IsNotNull(result);
             Assert.AreEqual(swapOrigin, result!.Position);
@@ -124,7 +124,7 @@ namespace M3.Tests.Core.Domain.Bomb
 
             var swapOrigin = new Position(1, 1);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: true, GemIdGenerator.Next());
 
             Assert.IsNotNull(result);
             Assert.AreEqual(swapOrigin, result!.Position);
@@ -151,7 +151,7 @@ namespace M3.Tests.Core.Domain.Bomb
 
             var swapOrigin = new Position(1, 1);
 
-            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: false);
+            var result = rule.TryCreate(match, swapOrigin, isPlayerMove: false, GemIdGenerator.Next());
 
             Assert.IsNull(result);
         }
