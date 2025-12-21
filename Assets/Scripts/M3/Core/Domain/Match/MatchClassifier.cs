@@ -35,10 +35,6 @@ namespace M3.Core.Domain.Match
             return results;
         }
 
-        // ----------------------------
-        // Cluster building
-        // ----------------------------
-
         private static List<HashSet<Position>> BuildClusters(
             List<MatchGroup> matches)
         {
@@ -66,7 +62,7 @@ namespace M3.Core.Domain.Match
                 }
                 else
                 {
-                    // Handle cascading merges (cluster overlaps another cluster)
+                    // Handle overlapping merges (cluster overlaps another cluster)
                     MergeOverlappingClusters(clusters);
                 }
             }
@@ -90,10 +86,7 @@ namespace M3.Core.Domain.Match
                 }
             }
         }
-
-        // ----------------------------
-        // Pattern detection
-        // ----------------------------
+        
 
         private static MatchPattern DeterminePattern(
             HashSet<Position> positions)
@@ -124,11 +117,11 @@ namespace M3.Core.Domain.Match
                             bool isHorizontalEndpoint =
                                 IsEndpoint(intersection, hLine);
 
-                            // Endpoint of both → L-shape
+                            // Endpoint of bothis L-shape
                             if (isVerticalEndpoint && isHorizontalEndpoint)
                                 return MatchPattern.LShape;
 
-                            // Interior of at least one → T-shape
+                            // Interior of at least one is T-shape
                             return MatchPattern.TShape;
                         }
                     }

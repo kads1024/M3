@@ -35,7 +35,6 @@ namespace M3.Presentation.Animation
         {
             foreach (var column in _columns)
             {
-                // IMPORTANT: bottom → top
                 foreach (var fall in column.Falls)
                 {
                     var view = _boardView.GetGemViewById(fall.GemId);

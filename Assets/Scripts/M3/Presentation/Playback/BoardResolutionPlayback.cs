@@ -5,7 +5,6 @@ using UnityEngine;
 using M3.Core.Domain;
 using M3.Core.Domain.Swap;
 using M3.Presentation.Animation;
-using M3.Presentation.Animation.Utils;
 using M3.Presentation.Board;
 
 using VContainer;
@@ -15,29 +14,32 @@ namespace M3.Presentation.Playback
 {
     public sealed class BoardResolutionPlayback : MonoBehaviour
     {
-        [SerializeField] private BoardAnimationSequence _animationSequence;
-        
+        [Header("Swap Config")]
         [SerializeField] private float _swapDuration = 0.25f;
         [SerializeField] private float _postSwapDelay = 0.15f;
         
+        [Header("Clear Config")]
+        [SerializeField] private float _clearDuration = 0.25f;
+        [SerializeField] private float _postClearDelay = 0.15f;
+        
+        [Header("Bomb Config")]
+        [SerializeField] private float _preNeighborExplodeDelay = 0.25f;
+        [SerializeField] private float _neighborExplodeDuration = 0.25f;
+        [SerializeField] private float _preBombClearDelay = 0.15f;
+        [SerializeField] private float _postBombPlacementDelay = 0.15f;
+        
+        [Header("Gravity Config")]
+        [SerializeField] private float _fallDuration = 0.25f;
+        [SerializeField] private float _delayBetweenGem = 0.1f;
+ 
         [Inject] private ResolutionTraceBuilder _traceBuilder;
         [Inject] private BoardView _boardView;
         [Inject] private BoardSpatialMap _spatialMap;
         [Inject] private BoardState _board;
         
-        public IEnumerator PlaySequence(
-            BoardAnimationSequence sequence,
-            BoardAnimationContext context)
-        {
-            foreach (var step in sequence.ResolutionAnimationSteps)
-            {
-                var runtime = step.CreateRuntime(context);
-                if (runtime != null)
-                    yield return runtime.Play();
-            }
-        }
+
         
-        public IEnumerator PlaySwap(
+        public IEnumerator PlaybackBoardSnapshot(
             bool accepted,
             Position a,
             Position b)
@@ -75,8 +77,9 @@ namespace M3.Presentation.Playback
                     var bombAnim = new BombTriggerAnimation(
                         _boardView,
                         trigger,
-                        neighborClearDelay: 2f,
-                        bombClearDelay: 2f);
+                        neighborClearDelay: _neighborExplodeDuration,
+                        bombClearDelay: _preBombClearDelay,
+                        preNeighborClearDelay:_preNeighborExplodeDelay);
 
                     yield return bombAnim.Play();
                 }
@@ -86,11 +89,11 @@ namespace M3.Presentation.Playback
                     this,
                     _boardView,
                     clearedPositions,
-                    0.1f);
+                    _clearDuration);
 
                 yield return clearAnim.Play();
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(_postClearDelay);
                 
            
 
@@ -111,7 +114,7 @@ namespace M3.Presentation.Playback
                         _spatialMap.GridToWorld(bp.Position);
                 }
                 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(_postBombPlacementDelay);
                 var spawns = SpawnDiff.Compute(step.Before, step.After);
 
                 
@@ -120,24 +123,19 @@ namespace M3.Presentation.Playback
                         _boardView,
                         _spatialMap,
                         spawns,
-                        spawnDuration: 0.1f,
+                        spawnDuration: 0.01f,
                         step.After)
                     .Play();
                 
-                yield return new WaitForSeconds(0.1f);
-                
-               
                 var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,
                     _boardView,
                     _spatialMap,
                     step.Gravity,
-                    fallDuration: 0.33f,
-                    delayBetween: 0.1f);
+                    fallDuration: _fallDuration,
+                    delayBetween: _delayBetweenGem);
 
                 yield return gravityAnim.Play();
-
-                yield return new WaitForSeconds(0.1f);
             }
 
 // FINAL VISUAL SYNC

@@ -41,6 +41,7 @@ namespace M3.Core.System
             }
         }
 
+        // SAFE COLOR = color that will not yield matches
         private GemColor ChooseSafeColor(BoardState board, int x, int y)
         {
             var candidates = new List<GemColor>(_availableColors);

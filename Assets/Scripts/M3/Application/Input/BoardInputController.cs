@@ -8,7 +8,6 @@ namespace M3.Application.Input
 {
     public sealed class BoardInputController : MonoBehaviour
     {
-
         [SerializeField] private Camera _camera;
         
         [Inject] private BoardResolutionCoordinator _coordinator;

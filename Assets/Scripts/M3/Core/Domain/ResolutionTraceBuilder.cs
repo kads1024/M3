@@ -99,13 +99,11 @@ namespace M3.Core.Domain
             for (int x = 0; x < before.Width; x++)
             {
                 var falls = new List<GemFall>();
-
-                // Map gemId -> position before
+                
                 var beforeColumn = before.Cells
                     .Where(kv => kv.Key.X == x)
                     .ToDictionary(kv => kv.Value.Id, kv => kv.Key);
 
-                // Map gemId -> position after
                 var afterColumn = after.Cells
                     .Where(kv => kv.Key.X == x)
                     .ToDictionary(kv => kv.Value.Id, kv => kv.Key);
@@ -114,14 +112,12 @@ namespace M3.Core.Domain
                 {
                     int gemId = kv.Key;
                     Position to = kv.Value;
-
-                    // If gem did not exist before, it spawned above the board
+                    
                     if (!beforeColumn.TryGetValue(gemId, out var from))
                     {
-                        from = new Position(x, after.Height); // spawn row
+                        from = new Position(x, after.Height);
                     }
 
-                    // If position changed, it fell
                     if (!from.Equals(to))
                     {
                         falls.Add(new GemFall(gemId, from, to));
@@ -131,7 +127,6 @@ namespace M3.Core.Domain
                 if (falls.Count == 0)
                     continue;
 
-                // IMPORTANT: bottom → top order
                 falls.Sort((a, b) => a.To.Y.CompareTo(b.To.Y));
 
                 result.Add(

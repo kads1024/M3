@@ -61,9 +61,6 @@ namespace M3.Core.System
 
             var classifiedMatches = _matchClassifier.Classify(rawMatches);
 
-            // -------------------------------------------------
-            // 1️⃣ Bomb creation (ONLY ON PLAYER MOVE)
-            // -------------------------------------------------
             BombCreationResult? bombToCreate = null;
             BombPlacement? bombPlacement = null;
 
@@ -85,15 +82,12 @@ namespace M3.Core.System
                             bombPlacement = new BombPlacement(
                                 bombToCreate.Id,
                                 bombToCreate.Position);
-                            break; // ✅ ONLY ONE BOMB
+                            break; 
                         }
                     }
                 }
             }
 
-            // -------------------------------------------------
-            // 2️⃣ Collect removals from matches
-            // -------------------------------------------------
             var toRemove = new HashSet<Position>();
 
             foreach (var match in classifiedMatches)
@@ -112,10 +106,7 @@ namespace M3.Core.System
                     toRemove.Add(pos);
                 }
             }
-
-            // -------------------------------------------------
-            // 3️⃣ Resolve bomb explosions (chain-aware)
-            // -------------------------------------------------
+            
             var bombTriggers = new List<BombTrigger>();
             var queue = new Queue<Position>(toRemove);
 
@@ -148,18 +139,12 @@ namespace M3.Core.System
                         pos,
                         affectedIds));
             }
-
-            // -------------------------------------------------
-            // 4️⃣ Remove gems
-            // -------------------------------------------------
+            
             foreach (var pos in toRemove)
             {
                 board.ClearGem(pos.X, pos.Y);
             }
-
-            // -------------------------------------------------
-            // 5️⃣ Place bomb (replacement, NOT spawn)
-            // -------------------------------------------------
+            
             if (bombToCreate != null)
             {
                 board.SetGem(
@@ -167,10 +152,7 @@ namespace M3.Core.System
                     bombToCreate.Position.Y,
                     new GemState(bombToCreate.Color, GemType.Bomb));
             }
-
-            // -------------------------------------------------
-            // 6️⃣ Gravity + spawn
-            // -------------------------------------------------
+            
             _gravitySystem.Apply(board);
             _gemSpawner.Spawn(board);
 

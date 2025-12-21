@@ -3,7 +3,7 @@ using M3.Core.Domain.Bomb;
 
 namespace M3.Core.System
 {
-    public sealed class CascadeIterationResult
+    public sealed class  CascadeIterationResult
     {
         public bool Unresolved { get; }
         public BombPlacement? BombPlacement { get; }

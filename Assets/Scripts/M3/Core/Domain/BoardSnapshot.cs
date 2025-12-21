@@ -42,10 +42,7 @@ namespace M3.Core.Domain
             position = default;
             return false;
         }
-
-        /// <summary>
-        /// Returns gem IDs in a column, bottom → top.
-        /// </summary>
+        
         public IReadOnlyList<int> GetColumnGemIds(int x)
         {
             var list = new List<int>();

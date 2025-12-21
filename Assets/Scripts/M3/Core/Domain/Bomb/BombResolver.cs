@@ -10,15 +10,15 @@ namespace M3.Core.Domain.Bomb
             // center
             ( 0,  0),
 
-            // vertical (±1, ±2)
+            // vertical (+/-1, +/-2)
             ( 0,  1), ( 0,  2),
             ( 0, -1), ( 0, -2),
 
-            // horizontal (±1, ±2)
+            // horizontal (+/-1, +/-2)
             ( 1,  0), ( 2,  0),
             (-1,  0), (-2,  0),
 
-            // diagonals (±1)
+            // diagonals (+/-1)
             ( 1,  1), (-1,  1),
             ( 1, -1), (-1, -1)
         };

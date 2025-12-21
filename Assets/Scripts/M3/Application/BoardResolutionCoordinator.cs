@@ -28,7 +28,7 @@ namespace M3.Application
 
             // Play swap animation (accepted or rejected)
             _boardView.StartCoroutine(
-                _playback.PlaySwap(
+                _playback.PlaybackBoardSnapshot(
                     result == SwapResult.Accepted,
                     a,
                     b));

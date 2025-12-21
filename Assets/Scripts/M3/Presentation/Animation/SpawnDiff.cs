@@ -29,7 +29,7 @@ namespace M3.Presentation.Animation
 
             foreach (var columnGroup in byColumn)
             {
-                // Sort bottom → top by final Y
+                // Sort bottom to top by final Y
                 var ordered = columnGroup
                     .OrderBy(x => x.Position.Y)
                     .ToList();
