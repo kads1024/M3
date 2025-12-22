@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using M3.Application;
 using M3.Application.Input;
 using M3.Core.Application;
@@ -66,16 +69,45 @@ namespace M3.Infrastructure.DI
             builder.RegisterInstance(_spatialMap);
         }
         
-        
+        // Create board with no initial matches
         private void CreateBoard()
         {
             _board = new BoardState(_width, _height);
 
-            // Temporary initialization
+            var allColors = Enum.GetValues(typeof(GemColor))
+                .Cast<GemColor>()
+                .ToList();
+
             for (int x = 0; x < _board.Width; x++)
             for (int y = 0; y < _board.Height; y++)
             {
-                var color = (GemColor)_random.Next(5);
+                var candidates = new List<GemColor>(allColors);
+
+                // Horizontal check
+                if (x >= 2)
+                {
+                    var c1 = _board.GetCell(x - 1, y);
+                    var c2 = _board.GetCell(x - 2, y);
+
+                    if (!c1.IsEmpty && !c2.IsEmpty && c1.Gem.Color == c2.Gem.Color)
+                        candidates.Remove(c1.Gem.Color);
+                }
+
+                // Vertical check
+                if (y >= 2)
+                {
+                    var c1 = _board.GetCell(x, y - 1);
+                    var c2 = _board.GetCell(x, y - 2);
+
+                    if (!c1.IsEmpty && !c2.IsEmpty && c1.Gem.Color == c2.Gem.Color)
+                        candidates.Remove(c1.Gem.Color);
+                }
+
+                // Fallback safety (should almost never happen)
+                if (candidates.Count == 0)
+                    candidates.AddRange(allColors);
+
+                var color = candidates[_random.Next(candidates.Count)];
                 _board.SetGem(x, y, new GemState(color, GemType.Normal));
             }
         }
