@@ -38,7 +38,7 @@ namespace M3.Presentation.Animation
                 foreach (var fall in column.Falls)
                 {
                     var view = _boardView.GetGemViewById(fall.GemId);
-                    if (view == null)
+                    if (!view)
                         continue;
 
                     // Compute target world position

@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace M3.Presentation.Animation
 {
+    /// <summary>
+    /// Utility where you can pass in a list of routines and run them in parallel
+    /// </summary>
     public static class CoroutineUtil
     {
         public static IEnumerator RunParallel(MonoBehaviour host, params IEnumerator[] routines)

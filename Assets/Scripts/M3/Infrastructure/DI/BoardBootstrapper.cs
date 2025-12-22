@@ -34,10 +34,6 @@ namespace M3.Infrastructure.DI
         
         protected override void Configure(IContainerBuilder builder)
         {
-            _random = new System.Random(_boardSeed);
-            CreateBoard();
-            CreateSpatialMap();
-            
             // Domain logic
             builder.Register<IMatchDetector, LineMatchDetector>(Lifetime.Singleton);
             builder.Register<MatchClassifier>(Lifetime.Singleton);
@@ -61,6 +57,10 @@ namespace M3.Infrastructure.DI
             builder.RegisterComponentInHierarchy<BoardResolutionPlayback>();
             
             builder.Register<BoardResolutionCoordinator>(Lifetime.Singleton);
+            
+            _random = new System.Random(_boardSeed);
+            CreateBoard();
+            CreateSpatialMap();
             
             builder.RegisterInstance(_board);
             builder.RegisterInstance(_spatialMap);

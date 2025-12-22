@@ -117,7 +117,6 @@ namespace M3.Presentation.Playback
                 // Spawn Gem Visually
                 var spawns = SpawnDiff.Compute(step.Before, step.After);
                 yield return new SpawnGemsAnimation(
-                        this,
                         _boardView,
                         _spatialMap,
                         spawns,

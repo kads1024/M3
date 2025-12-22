@@ -30,21 +30,23 @@ namespace M3.Presentation.Animation
         public IEnumerator Play()
         {
             yield return new WaitForSeconds(_preNeighborClearDelay);
+            
             // Clear neighbors FIRST
             foreach (var gemId in _trigger.AffectedGemIds)
             {
                 if (gemId == _trigger.BombGemId) continue;
                 
                 var view = _boardView.GetGemViewById(gemId);
-                if (view)
-                {
-                    yield return view.ClearGem(_neighborClearDelay);
-                    _boardView.DestroyGemViewAt(view.Position);
-                }
+                
+                if (!view) continue;
+                
+                yield return view.ClearGem(_neighborClearDelay);
+                _boardView.DestroyGemViewAt(view.Position);
             }
-
-            yield return new WaitForSeconds(_preBombClearDelay);
+            
             //  Clear the bomb LAST
+            yield return new WaitForSeconds(_preBombClearDelay);
+            
             var bombView = _boardView.GetGemViewById(_trigger.BombGemId);
             if (bombView)
             {

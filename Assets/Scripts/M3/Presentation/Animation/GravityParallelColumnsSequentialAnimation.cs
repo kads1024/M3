@@ -65,7 +65,7 @@ namespace M3.Presentation.Animation
             foreach (var fall in column.Falls)
             {
                 var view = _boardView.GetGemViewById(fall.GemId);
-                if (view == null)
+                if (!view)
                     continue;
 
                 Vector3 target = _spatialMap.GridToWorld(fall.To);

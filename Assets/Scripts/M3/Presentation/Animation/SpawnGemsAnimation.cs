@@ -8,7 +8,7 @@ namespace M3.Presentation.Animation
 {
     public sealed class SpawnGemsAnimation : IBoardAnimation
     {
-        private readonly MonoBehaviour _host;
+
         private readonly BoardView _boardView;
         private readonly BoardSpatialMap _spatialMap;
         private readonly BoardSnapshot _boardSnapshot;
@@ -16,14 +16,12 @@ namespace M3.Presentation.Animation
         private readonly float _spawnDuration;
 
         public SpawnGemsAnimation(
-            MonoBehaviour host,
             BoardView boardView,
             BoardSpatialMap spatialMap,
             IReadOnlyList<ColumnSpawn> spawns,
             float spawnDuration,
             BoardSnapshot boardSnapshot)
         {
-            _host = host;
             _boardView = boardView;
             _spatialMap = spatialMap;
             _spawns = spawns;
@@ -57,8 +55,7 @@ namespace M3.Presentation.Animation
 
                     // Offset by half cell so it centers correctly
                     // startWorld += (Vector3.up * (cellSize * 0.5f));
-
-
+                    
                     view.transform.position = startWorld;
 
                 }

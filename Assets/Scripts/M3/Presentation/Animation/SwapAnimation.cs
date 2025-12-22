@@ -38,8 +38,7 @@ namespace M3.Presentation.Animation
             {
                 Vector3 aStart = _a.transform.position;
                 Vector3 bStart = _b.transform.position;
-
-            
+                
                 // swap forward
                 yield return CoroutineUtil.RunParallel(
                     _host,

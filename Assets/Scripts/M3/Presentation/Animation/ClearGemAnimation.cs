@@ -4,7 +4,6 @@ using UnityEngine;
 using M3.Core.Domain;
 using M3.Presentation.Board;
 
-
 namespace M3.Presentation.Animation
 {
     public sealed class ClearGemsAnimation : IBoardAnimation
@@ -33,7 +32,7 @@ namespace M3.Presentation.Animation
             foreach (var pos in _positions)
             {
                 var view = _boardView.GetGemViewAt(pos);
-                if (view == null)
+                if (!view)
                     continue;
 
                 routines.Add(view.ClearGem(_duration));
