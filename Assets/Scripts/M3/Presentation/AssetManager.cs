@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace M3.Presentation
 {
+    /// <summary>
+    /// Manages assets for referencing
+    /// </summary>
     public class AssetManager : MonoBehaviour
     {
         [SerializedDictionary("GemColor", "GemSprite"), SerializeField] 

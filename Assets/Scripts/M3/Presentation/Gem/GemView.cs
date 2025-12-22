@@ -2,10 +2,11 @@ using UnityEngine;
 using System.Collections;
 using M3.Core.Domain;
 
-
-
 namespace M3.Presentation.Gem
 {
+    /// <summary>
+    /// Visual Representation of a logical gem
+    /// </summary>
     public sealed class GemView : MonoBehaviour
     {
         [SerializeField] private Sprite _bombSprite;

@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using M3.Core.Domain;
 using M3.Core.Domain.Swap;
 using M3.Presentation.Animation;
 using M3.Presentation.Board;
-
 using VContainer;
-
 
 namespace M3.Presentation.Playback
 {
+    /// <summary>
+    /// Responsible for playing the animation transition from board snapshot BEFORE and board snapshot AFTER by
+    /// coordinating animation and views
+    /// </summary>
     public sealed class BoardResolutionPlayback : MonoBehaviour
     {
         [Header("Swap Config")]
@@ -37,8 +38,7 @@ namespace M3.Presentation.Playback
         [Inject] private BoardSpatialMap _spatialMap;
         [Inject] private BoardState _board;
         
-
-        
+        // Plays animation sequences based on board snapshots
         public IEnumerator PlaybackBoardSnapshot(
             bool accepted,
             Position a,
@@ -53,7 +53,6 @@ namespace M3.Presentation.Playback
             IBoardAnimation anim = new SwapAnimation(this, gemA, gemB, aTarget, bTarget, _swapDuration, accepted);
 
             yield return anim.Play();
-
             yield return new WaitForSeconds(_postSwapDelay);
 
             if (!accepted)
@@ -63,15 +62,15 @@ namespace M3.Presentation.Playback
             gemA.SetLogicalPosition(b);
             gemB.SetLogicalPosition(a);
 
-
+            // Request board snapshots from trace builder
             var trace = _traceBuilder.Build(
                 _board,
                 SwapContext.PlayerMove(a, b));
 
-
+            // Animate trace steps
             foreach (var step in trace.Steps)
             {
-                // Bomb triggers 
+                // Bomb trigger Animation
                 foreach (var trigger in step.BombTriggers)
                 {
                     var bombAnim = new BombTriggerAnimation(
@@ -84,6 +83,7 @@ namespace M3.Presentation.Playback
                     yield return bombAnim.Play();
                 }
                 
+                // Clear Animation
                 var clearedPositions = ResolveClearedPositions(step);
                 var clearAnim = new ClearGemsAnimation(
                     this,
@@ -92,11 +92,9 @@ namespace M3.Presentation.Playback
                     _clearDuration);
 
                 yield return clearAnim.Play();
-
                 yield return new WaitForSeconds(_postClearDelay);
                 
-           
-
+                // Bomb Placement Visual
                 if (step.BombPlacement != null)
                 {
                     var bp = step.BombPlacement;
@@ -115,9 +113,9 @@ namespace M3.Presentation.Playback
                 }
                 
                 yield return new WaitForSeconds(_postBombPlacementDelay);
-                var spawns = SpawnDiff.Compute(step.Before, step.After);
-
                 
+                // Spawn Gem Visually
+                var spawns = SpawnDiff.Compute(step.Before, step.After);
                 yield return new SpawnGemsAnimation(
                         this,
                         _boardView,
@@ -127,6 +125,8 @@ namespace M3.Presentation.Playback
                         step.After)
                     .Play();
                 
+                // Gravity animation
+                // There are other available gravity animations that is swappable here
                 var gravityAnim = new GravityParallelColumnsSequentialAnimation(
                     this,
                     _boardView,
@@ -138,13 +138,13 @@ namespace M3.Presentation.Playback
                 yield return gravityAnim.Play();
             }
 
-// FINAL VISUAL SYNC
 
+            // FINAL VISUAL SYNC
             _boardView.ClearAllGemViews();
             _boardView.RenderFromSnapshot(trace.Final);
         }
 
-        
+        // Helper function for animating clearing matches
         private static List<Position> ResolveClearedPositions(
             CascadeStep step)
         {

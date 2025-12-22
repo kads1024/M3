@@ -1,26 +1,32 @@
-using System.Collections;
 using UnityEngine;
 using VContainer;
 using System.Collections.Generic;
 using M3.Core.Domain;
 using M3.Presentation.Gem;
-using M3.Presentation.Playback;
 
 namespace M3.Presentation.Board
 {
+    /// <summary>
+    /// Visual representation of a logical board and responsible for handling the gem views
+    /// </summary>
     public sealed class BoardView : MonoBehaviour
     {
+        [Header("Board Config")]
         [SerializeField] private Sprite _boardBackgroundSprite;
         [SerializeField] private Color _boardBackgroundColor = Color.white;
         [SerializeField] private float _backgroundPadding = 0.2f; // extra space around cells
         
+        [Header("Gem Config")]
         [SerializeField] private GemView _gemPrefab;
-        private GemViewPool _pool; // BoardView Owns the pool. So no need to inject
+        
+        [Header("Cell Config")]
         [SerializeField] private Sprite _cellSprite;
 
         [Inject] private BoardState _board;
         [Inject] private BoardSpatialMap _spatialMap;
         [Inject] private AssetManager _assetManager;
+        
+        private GemViewPool _pool; // BoardView Owns the pool. So no need to inject
         
         // Identity-based tracking
         private readonly List<GemView> _activeViews = new();
@@ -164,18 +170,6 @@ namespace M3.Presentation.Board
         //     _activeViews.Clear();
         //     _activeViews.AddRange(nextViews);
         // }
-
-        private GemView FindReusableView(HashSet<GemView> used)
-        {
-            foreach (var view in _activeViews)
-            {
-                if (!used.Contains(view))
-                    return view;
-            }
-
-            return null;
-        }
-        
         
         public GemView GetGemViewAt(Position pos)
         {

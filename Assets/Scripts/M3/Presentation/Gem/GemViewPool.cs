@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace M3.Presentation.Gem
 {
+    /// <summary>
+    /// Object pooling for GemView (specific for now since we don't need pooling for other game objects for now)
+    /// </summary>
     public sealed class GemViewPool
     {
         private readonly GemView _prefab;

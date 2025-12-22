@@ -12,6 +12,7 @@ namespace M3.Presentation.Animation
         private readonly float _neighborClearDelay;
         private readonly float _preBombClearDelay;
         private readonly float _preNeighborClearDelay;
+        
         public BombTriggerAnimation(
             BoardView boardView,
             BombTrigger trigger,
@@ -35,7 +36,7 @@ namespace M3.Presentation.Animation
                 if (gemId == _trigger.BombGemId) continue;
                 
                 var view = _boardView.GetGemViewById(gemId);
-                if (view != null)
+                if (view)
                 {
                     yield return view.ClearGem(_neighborClearDelay);
                     _boardView.DestroyGemViewAt(view.Position);
@@ -45,7 +46,7 @@ namespace M3.Presentation.Animation
             yield return new WaitForSeconds(_preBombClearDelay);
             //  Clear the bomb LAST
             var bombView = _boardView.GetGemViewById(_trigger.BombGemId);
-            if (bombView != null)
+            if (bombView)
             {
                 yield return bombView.ClearGem(0.1f);
                 _boardView.DestroyGemViewAt(bombView.Position);
