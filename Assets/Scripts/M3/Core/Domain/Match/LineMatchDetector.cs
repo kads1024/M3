@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq.Expressions;
-using UnityEngine;
 
 namespace M3.Core.Domain.Match
 {
+    /// <summary>
+    /// Match Detector for detecting matches that form a straight line
+    /// </summary>
     public sealed class LineMatchDetector : IMatchDetector
     {
         public IReadOnlyList<MatchGroup> Detect(BoardState board)

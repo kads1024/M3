@@ -2,6 +2,9 @@
 
 namespace M3.Core.Application
 {
+    /// <summary>
+    /// Responsible for accepting swap input from Input layer
+    /// </summary>
     public interface IBoardInteractionService
     {
         SwapResult TrySwap(

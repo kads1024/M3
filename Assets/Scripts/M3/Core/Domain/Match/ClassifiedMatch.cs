@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace M3.Core.Domain.Match
 {
+    /// <summary>
+    /// Data containing matches after classification (L Shape, T Shape, Line)
+    /// </summary>
     public sealed class ClassifiedMatch
     {
         public GemColor Color { get; }

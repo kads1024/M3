@@ -1,5 +1,8 @@
 ﻿namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Current state of one gem
+    /// </summary>
     public sealed class GemState
     {
         public int Id { get; }

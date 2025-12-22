@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using M3.Core.Domain;
-
 
 namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Data containing the Before and after positions of the gems affected by gravity
+    /// </summary>
     public sealed class ColumnGravityResolution
     {
         public int Column { get; }

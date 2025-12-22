@@ -2,6 +2,9 @@
 
 namespace M3.Core.Domain.Bomb
 {
+    /// <summary>
+    /// Data about where a bomb exploded and what cells was destroyed
+    /// </summary>
     public sealed class BombTrigger
     {
         public int BombGemId { get; }

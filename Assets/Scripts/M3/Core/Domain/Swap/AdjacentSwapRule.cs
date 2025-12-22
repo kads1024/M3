@@ -3,6 +3,9 @@ using M3.Core.Domain.Match;
 
 namespace M3.Core.Domain.Swap
 {
+    /// <summary>
+    /// Default ISwapRule where swap is valid if gem is Orthogonally adjacent to cell to be swapped
+    /// </summary>
     public sealed class AdjacentSwapRule : ISwapRule
     {
         private readonly IMatchDetector _matchDetector;

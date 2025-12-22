@@ -7,6 +7,9 @@ using M3.Core.Domain.Swap;
 
 namespace M3.Core.System
 {
+    /// <summary>
+    /// Default ICascadeSystem with incorporated bombs. (You can create a new child of ICascadeSystem without bombs)
+    /// </summary>
     public sealed class CascadeSystem : ICascadeSystem
     {
         private readonly IMatchDetector _matchDetector;
@@ -32,6 +35,11 @@ namespace M3.Core.System
             _bombResolver = bombResolver;
         }
 
+        /// <summary>
+        /// Resolve cascade until board is stable
+        /// </summary>
+        /// <param name="board">board to be mutated and stabilized</param>
+        /// <param name="context">swap information</param>
         public void Resolve(BoardState board, SwapContext context)
         {
             bool isPlayerMove = context.IsPlayerMove;
@@ -41,7 +49,14 @@ namespace M3.Core.System
                 // loop until stable
             }
         }
-
+        
+        /// <summary>
+        /// Resolve one iteration of a cascade regardless of board stability
+        /// </summary>
+        /// <param name="board">board to be mutated and resolve one iteration</param>
+        /// <param name="context">swap information</param>
+        /// <param name="isPlayerMove">whether the swap was initiated by the player</param>
+        /// <returns></returns>
         public CascadeIterationResult ResolveOneIteration(
             BoardState board,
             SwapContext context,
@@ -49,22 +64,35 @@ namespace M3.Core.System
         {
             return ResolveIteration(board, context, ref isPlayerMove);
         }
-
+        
+        /// <summary>
+        /// Resolve one iteration of a cascade regardless of board stability
+        /// </summary>
+        /// <param name="board">board to be mutated and resolve one iteration</param>
+        /// <param name="context">swap information</param>
+        /// <param name="isPlayerMove">whether the swap was initiated by the player</param>
+        /// <returns></returns>
         private CascadeIterationResult ResolveIteration(
             BoardState board,
             SwapContext context,
             ref bool isPlayerMove)
         {
+            // Detect all matches on the board. If there are no matches, exit
             var rawMatches = _matchDetector.Detect(board);
             if (rawMatches.Count == 0)
                 return new CascadeIterationResult(false, null, new List<BombTrigger>());
-
+            
+            // if there are matches, classify them
             var classifiedMatches = _matchClassifier.Classify(rawMatches);
 
+            //-----------------------------------------------------
+            // determine if bomb creation is possible from a match. You can comment this out if you dont want a
+            // bomb system, and it wouldn't break the game since bomb is a separate subsystem and not invasive to other 
+            // domain Logic
             BombCreationResult? bombToCreate = null;
             BombPlacement? bombPlacement = null;
-
-            //if (isPlayerMove)
+            
+            if (isPlayerMove)
             {
                 var swapOrigin = FindActualSwapOrigin(classifiedMatches, context);
 
@@ -88,9 +116,10 @@ namespace M3.Core.System
                     }
                 }
             }
-
+            //---------------------------------------------------
+            
             var toRemove = new HashSet<Position>();
-
+            // Once classified, remove matches
             foreach (var match in classifiedMatches)
             {
                 foreach (var pos in match.Positions)
@@ -108,9 +137,13 @@ namespace M3.Core.System
                 }
             }
             
-            var bombTriggers = new List<BombTrigger>();
             var queue = new Queue<Position>(toRemove);
-
+            var bombTriggers = new List<BombTrigger>();
+            //-------------------------------------------------
+            // Non invasive way of destroying gems is to add the exploded gems to the toRemove Queue instead of 
+            // incorporating bomb logic in the match logic. If you comment this line, it will act as if the bomb is a 
+            // normal gem without breaking the game.
+            
             while (queue.Count > 0)
             {
                 var pos = queue.Dequeue();
@@ -140,12 +173,15 @@ namespace M3.Core.System
                         pos,
                         affectedIds));
             }
+            //-------------------------------------------------
             
+            // Proceed to removing all gems that were matched
             foreach (var pos in toRemove)
             {
                 board.ClearGem(pos.X, pos.Y);
             }
             
+            // Spawn the bomb in the correct place (commentable)
             if (bombToCreate != null)
             {
                 board.SetGem(
@@ -154,17 +190,18 @@ namespace M3.Core.System
                     new GemState(bombToCreate.Color, GemType.Bomb, bombToCreate.Id));
             }
             
-            _gravitySystem.Apply(board);
+            _gravitySystem.Apply(board); 
             _gemSpawner.Spawn(board);
 
-            isPlayerMove = false;
+            isPlayerMove = false; // Set player move to false since future iterations after this (if there are any)
+                                  // is considered cascade and not a player move anymore
 
             return new CascadeIterationResult(
                 unresolved: true,
                 bombPlacement: bombPlacement,
                 bombTrigger: bombTriggers);
         }
-
+        
         private static Position? FindActualSwapOrigin(
             IReadOnlyList<ClassifiedMatch> matches,
             SwapContext context)

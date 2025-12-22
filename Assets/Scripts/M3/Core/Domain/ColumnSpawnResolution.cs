@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using M3.Core.Domain;
 
 namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Data containing gems that were spawned and where they were spawned
+    /// </summary>
     public sealed class ColumnSpawn
     {
         public int Column { get; }

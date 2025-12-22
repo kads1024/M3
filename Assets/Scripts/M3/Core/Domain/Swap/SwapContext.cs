@@ -1,7 +1,8 @@
-﻿using M3.Core.Domain;
-
-namespace M3.Core.Domain.Swap
+﻿namespace M3.Core.Domain.Swap
 {
+    /// <summary>
+    /// Data about the swapped positions
+    /// </summary>
     public readonly struct SwapContext
     {
         public bool IsPlayerMove { get; }

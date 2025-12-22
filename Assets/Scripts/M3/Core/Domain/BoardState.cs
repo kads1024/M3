@@ -2,6 +2,9 @@
 
 namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Current State of the board.
+    /// </summary>
     public sealed class BoardState
     {
         private readonly CellState[,] _cells;
@@ -68,6 +71,7 @@ namespace M3.Core.Domain
             GetCell(x, y).ClearGem();
         }
 
+        // Clone functions so that we can test mutation on the clone before applying it to the original board
         public BoardState Clone()
         {
             var clone = new BoardState(Width, Height);

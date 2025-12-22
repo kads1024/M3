@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
 using M3.Core.Domain;
@@ -8,11 +7,11 @@ namespace M3.Application.Input
 {
     public sealed class BoardInputController : MonoBehaviour
     {
-        [SerializeField] private Camera _camera;
-        
         [Inject] private BoardResolutionCoordinator _coordinator;
-        [Inject]private BoardSpatialMap _spatialMap;
-        [Inject]private BoardState _board;
+        [Inject] private BoardSpatialMap _spatialMap;
+        [Inject] private BoardState _board;
+        
+        [SerializeField] private Camera _camera;
         
         private BoardInputActions _input;
         private Position? _selected;
@@ -34,34 +33,21 @@ namespace M3.Application.Input
             _input.Disable();
         }
 
-        private void Start()
-        {
-            if (_board == null)
-            {
-                Debug.LogError("BoardInputController: BoardState is null");
-            }
-            
-            if (_spatialMap == null)
-            {
-                Debug.LogError("BoardView: BoardSpatialMap is null");
-                return;
-            }
-        }
-
         private void OnSelect(InputAction.CallbackContext ctx)
         {
             Vector2 screenPos = _input.Board.Position.ReadValue<Vector2>();
             Vector3 worldPos = _camera.ScreenToWorldPoint(screenPos);
 
+            // Ignore if selected position is outside the grid
             if (!_spatialMap.TryWorldToGrid(worldPos, out var gridPos))
                 return;
 
-            if (_selected == null)
+            if (_selected == null) // If nothing is selected, it means it is the first gem clicked
             {
                 _selected = gridPos;
                 Debug.Log($"Selected ({gridPos.X}, {gridPos.Y})");
             }
-            else
+            else // If something is selected, it means it is the second gem clicked. Initiate swap
             {
                 var from = _selected.Value;
                 var to = gridPos;

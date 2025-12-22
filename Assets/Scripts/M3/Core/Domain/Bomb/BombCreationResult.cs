@@ -1,5 +1,8 @@
 ﻿namespace M3.Core.Domain.Bomb
 {
+    /// <summary>
+    /// Data about the creation of Bombs
+    /// </summary>
     public sealed class BombCreationResult
     {
         public Position Position { get; }

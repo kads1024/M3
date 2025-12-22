@@ -1,7 +1,8 @@
-﻿using M3.Core.Domain;
-
-namespace M3.Core.Domain.Bomb
+﻿namespace M3.Core.Domain.Bomb
 {
+    /// <summary>
+    /// Data about where to place the bomb
+    /// </summary>
     public sealed class BombPlacement
     {
         public int BombGemId { get; }

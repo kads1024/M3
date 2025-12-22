@@ -1,8 +1,10 @@
 using System.Collections.Generic;
-using M3.Core.Domain;
 
 namespace M3.Core.Domain
 {
+    /// <summary>
+    /// A copy of a state of the board
+    /// </summary>
     public sealed class BoardSnapshot
     {
         public int Width { get; }
@@ -44,21 +46,6 @@ namespace M3.Core.Domain
 
             position = default;
             return false;
-        }
-        
-        public IReadOnlyList<int> GetColumnGemIds(int x)
-        {
-            var list = new List<int>();
-
-            for (int y = 0; y < Height; y++)
-            {
-                if (Cells.TryGetValue(new Position(x, y), out var gem))
-                {
-                    list.Add(gem.Id);
-                }
-            }
-
-            return list;
         }
     }
 }

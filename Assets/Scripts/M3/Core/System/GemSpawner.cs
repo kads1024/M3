@@ -4,6 +4,9 @@ using M3.Core.Domain;
 
 namespace M3.Core.System
 {
+    /// <summary>
+    /// Default IGemSpawner where spawned gems will not create matches
+    /// </summary>
     public sealed class GemSpawner : IGemSpawner
     {
         private readonly Random _random;

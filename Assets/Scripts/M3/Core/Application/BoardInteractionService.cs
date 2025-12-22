@@ -3,6 +3,9 @@ using M3.Core.Domain.Swap;
 
 namespace M3.Core.Application
 {
+    /// <summary>
+    /// Default IBoardInteractionService
+    /// </summary>
     public sealed class BoardInteractionService : IBoardInteractionService
     {
         private readonly ISwapRule _swapRule;

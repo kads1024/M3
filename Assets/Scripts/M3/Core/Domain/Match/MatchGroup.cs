@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace M3.Core.Domain.Match
 {
+    /// <summary>
+    /// Data containing list of gems that were grouped together
+    /// </summary>
     public sealed class MatchGroup
     {
         public GemColor Color { get; }

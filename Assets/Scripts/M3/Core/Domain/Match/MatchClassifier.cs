@@ -3,21 +3,26 @@ using System.Linq;
 
 namespace M3.Core.Domain.Match
 {
+    /// <summary>
+    /// Responsible for classifying raw matches without mutating the board
+    /// </summary>
     public sealed class MatchClassifier
     {
         public IReadOnlyList<ClassifiedMatch> Classify(
             IReadOnlyList<MatchGroup> lineMatches)
         {
+            // Don't continue if there were no matches to begin with
             if (lineMatches == null || lineMatches.Count == 0)
                 return new List<ClassifiedMatch>();
 
             var results = new List<ClassifiedMatch>();
 
-            // 1. Group by color first (different colors can never merge)
+            // Group by color first (different colors can never merge)
             var matchesByColor = lineMatches.GroupBy(m => m.Color);
 
             foreach (var colorGroup in matchesByColor)
             {
+                // Then group by cluster (matches that are glued to each other form 1 cluster)
                 var clusters = BuildClusters(colorGroup.ToList());
 
                 foreach (var cluster in clusters)
@@ -35,6 +40,11 @@ namespace M3.Core.Domain.Match
             return results;
         }
 
+        /// <summary>
+        /// Responsible for grouping raw colored matches to clusters.
+        /// </summary>
+        /// <param name="matches">Raw colored matches to be grouped</param>
+        /// <returns>List of grouped clusters</returns>
         private static List<HashSet<Position>> BuildClusters(
             List<MatchGroup> matches)
         {
@@ -70,6 +80,10 @@ namespace M3.Core.Domain.Match
             return clusters;
         }
 
+        /// <summary>
+        /// If 2 clusters overlap, merge them
+        /// </summary>
+        /// <param name="clusters"></param>
         private static void MergeOverlappingClusters(
             List<HashSet<Position>> clusters)
         {
@@ -87,7 +101,11 @@ namespace M3.Core.Domain.Match
             }
         }
         
-
+        /// <summary>
+        /// Determines what the pattern of a given cluster is
+        /// </summary>
+        /// <param name="positions">Cluster list to be determined</param>
+        /// <returns>Pattern of that cluster</returns>
         private static MatchPattern DeterminePattern(
             HashSet<Position> positions)
         {
@@ -117,7 +135,7 @@ namespace M3.Core.Domain.Match
                             bool isHorizontalEndpoint =
                                 IsEndpoint(intersection, hLine);
 
-                            // Endpoint of bothis L-shape
+                            // Endpoint of both is L-shape
                             if (isVerticalEndpoint && isHorizontalEndpoint)
                                 return MatchPattern.LShape;
 
@@ -131,6 +149,14 @@ namespace M3.Core.Domain.Match
             return MatchPattern.Line;
         }
 
+        /// <summary>
+        /// Determines where the intersection lies
+        /// (if the intersection of the matches is on the edges, it is an L
+        ///  if it is on the inside, it is a T) 
+        /// </summary>
+        /// <param name="intersection">Point where the two lines intersect</param>
+        /// <param name="line">the two lines to compare</param>
+        /// <returns></returns>
         private static bool IsEndpoint(
             Position intersection,
             IEnumerable<Position> line)

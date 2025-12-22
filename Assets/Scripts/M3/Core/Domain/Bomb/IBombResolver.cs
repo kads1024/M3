@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using M3.Core.Domain;
 
 namespace M3.Core.Domain.Bomb
 {
+    /// <summary>
+    /// Separate system for computing additional cells to destroy
+    /// </summary>
     public interface IBombResolver
     {
         IReadOnlyCollection<Position> Resolve(

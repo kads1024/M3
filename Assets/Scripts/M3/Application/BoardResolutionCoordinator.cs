@@ -23,10 +23,10 @@ namespace M3.Application
 
         public void TrySwap(BoardState board, Position a, Position b)
         {
-            // Try swap (NO CASCADE)
+            // Try swap first before animating
             var result = _interactionService.TrySwap(board, a, b);
 
-            // Play swap animation (accepted or rejected)
+            // Play board animations (swap - clear - gravity - spawn)
             _boardView.StartCoroutine(
                 _playback.PlaybackBoardSnapshot(
                     result == SwapResult.Accepted,

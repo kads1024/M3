@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
-using M3.Core.Domain;
 
 namespace M3.Core.Domain.Bomb
 {
+    /// <summary>
+    /// Bomb resolver that forms a diamond shape
+    /// </summary>
     public sealed class BombResolver : IBombResolver
     {
+        // What cells to clear
         private static readonly (int dx, int dy)[] Offsets =
         {
             // center
@@ -23,6 +26,7 @@ namespace M3.Core.Domain.Bomb
             ( 1, -1), (-1, -1)
         };
 
+        // Return all neighboring cells without mutating the board
         public IReadOnlyCollection<Position> Resolve(
             BoardState board,
             Position bombPosition)

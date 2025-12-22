@@ -2,6 +2,9 @@ using System;
 
 namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Board coordinates
+    /// </summary>
     public readonly struct Position
     {
         public int X { get; }

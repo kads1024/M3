@@ -1,8 +1,11 @@
 using UnityEngine;
-using M3.Core.Domain;
 
 namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Responsible for the World Spatial Data of a Board
+    /// Responsible for translating world coordinates to board coordinates and vice versa.
+    /// </summary>
     public sealed class BoardSpatialMap
     {
         private readonly BoardState _board;

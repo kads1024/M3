@@ -59,7 +59,9 @@ namespace M3.Infrastructure.DI
             builder.RegisterComponentInHierarchy<BoardView>();
             builder.RegisterComponentInHierarchy<BoardInputController>();
             builder.RegisterComponentInHierarchy<BoardResolutionPlayback>();
+            
             builder.Register<BoardResolutionCoordinator>(Lifetime.Singleton);
+            
             builder.RegisterInstance(_board);
             builder.RegisterInstance(_spatialMap);
         }

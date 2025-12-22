@@ -2,6 +2,9 @@ using M3.Core.Domain;
 
 namespace M3.Core.System
 {
+    /// <summary>
+    /// Default IGravitySystem where gems only fall from top to bottom
+    /// </summary>
     public sealed class GravitySystem : IGravitySystem
     {
         public void Apply(BoardState board)

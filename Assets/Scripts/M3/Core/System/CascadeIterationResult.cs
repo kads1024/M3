@@ -3,6 +3,9 @@ using M3.Core.Domain.Bomb;
 
 namespace M3.Core.System
 {
+    /// <summary>
+    /// Data containing what happened in one cascade iteration
+    /// </summary>
     public sealed class  CascadeIterationResult
     {
         public bool Unresolved { get; }

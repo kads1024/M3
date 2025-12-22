@@ -1,5 +1,8 @@
 ﻿namespace M3.Core.Domain
 {
+    /// <summary>
+    /// Current state of a single cell and what gem it contains
+    /// </summary>
     public sealed class CellState
     {
         public Position Position { get; }
