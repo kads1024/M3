@@ -35,6 +35,13 @@ namespace M3.Application.Input
 
         private void OnSelect(InputAction.CallbackContext ctx)
         {
+            // Input locking when board is not yet resolved
+            if (_coordinator.IsLocked)
+            {
+                Debug.Log("Board is locked. Please wait...");
+                return;
+            }
+            
             Vector2 screenPos = _input.Board.Position.ReadValue<Vector2>();
             Vector3 worldPos = _camera.ScreenToWorldPoint(screenPos);
 

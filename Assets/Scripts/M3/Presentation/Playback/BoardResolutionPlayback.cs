@@ -42,7 +42,8 @@ namespace M3.Presentation.Playback
         public IEnumerator PlaybackBoardSnapshot(
             bool accepted,
             Position a,
-            Position b)
+            Position b,
+            System.Action onComplete)
         {
             var gemA = _boardView.GetGemViewAt(a);
             var gemB = _boardView.GetGemViewAt(b);
@@ -56,7 +57,11 @@ namespace M3.Presentation.Playback
             yield return new WaitForSeconds(_postSwapDelay);
 
             if (!accepted)
+            {
+                onComplete?.Invoke();
                 yield break;
+            }
+                
 
             // Update logical positions immediately
             gemA.SetLogicalPosition(b);
@@ -74,6 +79,7 @@ namespace M3.Presentation.Playback
                 foreach (var trigger in step.BombTriggers)
                 {
                     var bombAnim = new BombTriggerAnimation(
+                        this,
                         _boardView,
                         trigger,
                         neighborClearDelay: _neighborExplodeDuration,
@@ -141,6 +147,8 @@ namespace M3.Presentation.Playback
             // FINAL VISUAL SYNC
             _boardView.ClearAllGemViews();
             _boardView.RenderFromSnapshot(trace.Final);
+            
+            onComplete?.Invoke();
         }
 
         // Helper function for animating clearing matches

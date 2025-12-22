@@ -102,6 +102,67 @@ namespace M3.Presentation.Gem
             _renderer.color = Color.white;
         }
         
+
+        private const float FlashPeriod = 0.5f; // time for one pulse up/down
+        public IEnumerator Flashing(
+            float duration,
+            float pulseScale)
+        {
+            if (!_renderer)
+                yield break;
+
+            Vector3 baseScale = transform.localScale;
+            Color baseColor = _renderer.color;
+
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                // Pulse up
+                yield return Animate(
+                    baseScale,
+                    baseScale * pulseScale,
+                    baseColor,
+                    Color.white,
+                    FlashPeriod * 0.5f);
+
+                // Pulse down
+                yield return Animate(
+                    baseScale * pulseScale,
+                    baseScale,
+                    Color.white,
+                    baseColor,
+                    FlashPeriod * 0.5f);
+
+                elapsed += FlashPeriod;
+            }
+
+            // Safety reset
+            transform.localScale = baseScale;
+            _renderer.color = baseColor;
+        }
+
+        private IEnumerator Animate(
+            Vector3 fromScale,
+            Vector3 toScale,
+            Color fromColor,
+            Color toColor,
+            float duration)
+        {
+            float t = 0f;
+
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float p = Mathf.Clamp01(t / duration);
+
+                transform.localScale = Vector3.Lerp(fromScale, toScale, p);
+                _renderer.color = Color.Lerp(fromColor, toColor, p);
+
+                yield return null;
+            }
+        }
+        
         private static Color ColorFor(GemColor color)
         {
             return color switch

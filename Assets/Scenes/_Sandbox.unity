@@ -223,10 +223,10 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  _boardSeed: 2
-  _gemSpawnSeed: 1
-  _width: 4
-  _height: 4
+  _boardSeed: 8
+  _gemSpawnSeed: 8
+  _width: 8
+  _height: 8
   _cellSize: 1
   _boardOriginOffset: {x: 0, y: 0}
 --- !u!4 &837454511
@@ -532,7 +532,7 @@ MonoBehaviour:
   _preBombClearDelay: 2
   _postBombPlacementDelay: 0.15
   _fallDuration: 0.25
-  _delayBetweenGem: 0.15
+  _delayBetweenGem: 0.05
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

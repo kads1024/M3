@@ -10,7 +10,10 @@ namespace M3.Application
         private readonly BoardInteractionService _interactionService;
         private readonly BoardResolutionPlayback _playback;
         private readonly BoardView _boardView;
-
+        
+        private bool _isResolving;
+        public bool IsLocked => _isResolving;
+        
         public BoardResolutionCoordinator(
             BoardInteractionService interactionService,
             BoardResolutionPlayback playback,
@@ -23,6 +26,10 @@ namespace M3.Application
 
         public void TrySwap(BoardState board, Position a, Position b)
         {
+            if (_isResolving)
+                return;
+            
+            _isResolving = true;
             // Try swap first before animating
             var result = _interactionService.TrySwap(board, a, b);
 
@@ -31,8 +38,14 @@ namespace M3.Application
                 _playback.PlaybackBoardSnapshot(
                     result == SwapResult.Accepted,
                     a,
-                    b));
+                    b, 
+                    onComplete: OnPlaybackFinished));
 
+        }
+        
+        private void OnPlaybackFinished()
+        {
+            _isResolving = false;
         }
     }
 }
